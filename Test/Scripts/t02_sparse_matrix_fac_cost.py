@@ -103,7 +103,7 @@ if __name__ == "__main__":
         end_t = time.time()
         t1 = end_t - start_t
 
-        b = np.ones(shape=(1 * n2 + int32_max,), dtype=precision)
+        b = np.ones(shape=(n1 * n2 + int32_max,), dtype=precision)
         start_t = time.time()
         x = mat3lu.solve(b)
         end_t = time.time()
