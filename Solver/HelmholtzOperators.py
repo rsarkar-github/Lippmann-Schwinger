@@ -1,7 +1,6 @@
-
 from scipy.sparse import csc_matrix
 import numpy as np
-from Utilities import TypeChecker
+from ..Utilities import TypeChecker
 
 
 def create_helmholtz2d_matrix(
@@ -2104,4 +2103,3 @@ def create_helmholtz2d_matrix_even(
         mat = csc_matrix((data, (rows, cols)), shape=(n1 * n2, n1 * n2))
 
     return mat
-
