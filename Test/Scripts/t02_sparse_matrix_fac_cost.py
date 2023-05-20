@@ -13,7 +13,7 @@ if __name__ == "__main__":
 
     freq = 15.0
     omega = freq * 2 * np.pi
-    precision = np.complex64
+    precision = np.complex128
 
     v0 = 2.0
     lambda_ = v0 / freq
