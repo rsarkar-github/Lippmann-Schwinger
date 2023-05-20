@@ -82,8 +82,8 @@ if __name__ == "__main__":
         mat1_cols = mat1.col.astype(np.int64)
         mat1_data = mat1.data
 
-        # int32_max = np.iinfo(np.int32).max
-        int32_max = 100
+        int32_max = np.iinfo(np.int32).max
+        # int32_max = 100
 
         mat2 = sparse.eye(int32_max, dtype=precision, format="coo")
         mat2_rows = mat2.row.astype(np.int64) + ndim
