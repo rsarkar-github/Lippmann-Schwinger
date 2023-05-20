@@ -56,7 +56,7 @@ if __name__ == "__main__":
         a2_arr.append(dx2 * n2_total_arr[i])
 
 
-    def factorize(n1, n2, pad1, pad2, a1, a2):
+    def factorize_solve(n1, n2, pad1, pad2, a1, a2):
 
         vel = np.zeros(shape=(n1, n2), dtype=np.float32)
         vel += v0
@@ -82,8 +82,8 @@ if __name__ == "__main__":
         mat1_cols = mat1.col.astype(np.int64)
         mat1_data = mat1.data
 
-        int32_max = np.iinfo(np.int32).max
-        # int32_max = 100
+        # int32_max = np.iinfo(np.int32).max
+        int32_max = 100
 
         mat2 = sparse.eye(int32_max, dtype=precision, format="coo")
         mat2_rows = mat2.row.astype(np.int64) + ndim
@@ -99,13 +99,22 @@ if __name__ == "__main__":
         )
 
         start_t = time.time()
-        splu(mat3)
+        mat3lu = splu(mat3)
         end_t = time.time()
-        return end_t - start_t
+        t1 = end_t - start_t
+
+        b = np.ones(shape=(1 * n2 + int32_max,), dtype=precision)
+        start_t = time.time()
+        x = mat3lu.solve(b)
+        end_t = time.time()
+        t2 = end_t - start_t
+
+        return t1, t2
 
     fac_times = []
+    solve_times = []
     for i, item in enumerate(fac):
-        t = factorize(
+        t1, t2 = factorize_solve(
             n1=n1_total_arr[i],
             n2=n2_total_arr[i],
             pad1=pad1_arr[i],
@@ -113,9 +122,13 @@ if __name__ == "__main__":
             a1=a1_arr[i],
             a2=a2_arr[i]
         )
-
-        fac_times.append(t)
-        print("n1 = ", n1_total_arr[i], ", n2 = ", n2_total_arr[i], ", time = ", "{:4.2f}".format(t))
+        fac_times.append(t1)
+        solve_times.append(t2)
+        print(
+            "n1 = ", n1_total_arr[i], ", n2 = ", n2_total_arr[i],
+            ", factorization time = ", "{:4.2f}".format(t1),
+            ", solve time = ", "{:4.2f}".format(t2)
+        )
 
     results = {}
     for i, item in enumerate(fac):
@@ -123,7 +136,8 @@ if __name__ == "__main__":
         results[key] = {}
         results[key]["n1"] = n1_total_arr[i]
         results[key]["n2"] = n2_total_arr[i]
-        results[key]["t"] = "{:4.2f}".format(fac_times[i]) + " s"
+        results[key]["t1"] = "{:4.2f}".format(fac_times[i]) + " s"
+        results[key]["t2"] = "{:4.2f}".format(solve_times[i]) + " s"
 
     filename = "Lippmann-Schwinger/Test/Data/t02_matrix_fac_cost.json"
     with open(filename, "w") as file:
