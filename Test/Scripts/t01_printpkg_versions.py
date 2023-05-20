@@ -5,7 +5,7 @@ import matplotlib
 import tqdm
 
 
-if __name__ == "__init__":
+if __name__ == "__main__":
 
     print("Numpy version:", numpy.__version__)
     print("Scipy version:", scipy.__version__)
