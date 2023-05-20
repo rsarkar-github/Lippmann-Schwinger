@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.sparse.linalg import splu
+from scikits import umfpack
 import time
 import json
 from ...Solver.HelmholtzOperators import create_helmholtz2d_matrix
@@ -29,7 +30,7 @@ if __name__ == "__main__":
             return ii + 1
 
     # fac = [1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0]
-    fac = [1.0, 2.0, 4.0, 8.0, 32.0]
+    fac = [1.0, 2.0, 4.0, 32.0]
     arr_n1 = [make_odd(int(n1_start * item)) for item in fac]
     arr_n2 = [make_odd(int(n2_start * item)) for item in fac]
 
@@ -73,13 +74,13 @@ if __name__ == "__main__":
         )
 
         start_t = time.time()
-        splu(mat)
+        # splu(mat)
+        umfpack.splu(mat)
         end_t = time.time()
         return end_t - start_t
 
     fac_times = []
     for i, item in enumerate(fac):
-
         t = factorize(
             n1=n1_total_arr[i],
             n2=n2_total_arr[i],
