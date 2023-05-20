@@ -78,25 +78,25 @@ if __name__ == "__main__":
         # Add identity to activate long indexing int64
         mat1 = coo_matrix(mat)
         ndim = mat1.shape[0]
-        mat1_rows = mat1.row
-        mat1_cols = mat1.col
+        mat1_rows = mat1.row.astype(np.int64)
+        mat1_cols = mat1.col.astype(np.int64)
         mat1_data = mat1.data
 
         int32_max = np.iinfo(np.int32).max
         # int32_max = 100
 
         mat2 = sparse.eye(int32_max, dtype=precision, format="coo")
-        mat2_rows = mat2.row + ndim
-        mat2_cols = mat2.col + ndim
+        mat2_rows = mat2.row.astype(np.int64) + ndim
+        mat2_cols = mat2.col.astype(np.int64) + ndim
         mat2_data = mat2.data
-
-        print(mat1_rows.dtype)
-        print(mat2_rows.dtype)
 
         mat3_rows = np.concatenate((mat1_rows, mat2_rows))
         mat3_cols = np.concatenate((mat1_cols, mat2_cols))
         mat3_data = np.concatenate((mat1_data, mat2_data))
-        mat3 = csc_matrix((mat3_data, (mat3_rows, mat3_cols)), shape=(n1 * n2 + int32_max, n1 * n2 + int32_max))
+        mat3 = csc_matrix(
+            (mat3_data, (mat3_rows, mat3_cols)),
+            shape=(n1 * n2 + int32_max, n1 * n2 + int32_max)
+        )
 
         start_t = time.time()
         splu(mat3)
