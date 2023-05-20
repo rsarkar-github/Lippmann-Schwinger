@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.sparse.linalg import splu
 import time
+import json
 from ...Solver.HelmholtzOperators import create_helmholtz2d_matrix
 
 
@@ -27,7 +28,7 @@ if __name__ == "__main__":
         else:
             return ii + 1
 
-    fac = [1.0, 2.0, 4.0, 6.0, 8.0, 10.0]
+    fac = [1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0]
     arr_n1 = [make_odd(int(n1_start * item)) for item in fac]
     arr_n2 = [make_odd(int(n2_start * item)) for item in fac]
 
@@ -73,8 +74,6 @@ if __name__ == "__main__":
         start_t = time.time()
         splu(mat)
         end_t = time.time()
-        print("\nTotal time to LU factorize: ", "{:4.2f}".format(end_t - start_t), " s \n")
-
         return end_t - start_t
 
     fac_times = []
@@ -91,3 +90,15 @@ if __name__ == "__main__":
 
         fac_times.append(t)
         print("n1 = ", n1_total_arr[i], ", n2 = ", n2_total_arr[i], ", time = ", "{:4.2f}".format(t))
+
+    results = {}
+    for i, item in enumerate(fac):
+        key = "test" + str(i)
+        results[key] = {}
+        results[key]["n1"] = n1_total_arr[i]
+        results[key]["n2"] = n2_total_arr[i]
+        results[key]["t"] = "{:4.2f}".format(fac_times[i]) + " s"
+
+    filename = "Lippmann-Schwinger/Test/Data/t02_matrix_fac_cost.json"
+    with open(filename, "w") as file:
+        json.dump(results, file, indent=4)
