@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.sparse.linalg import splu
-from scikits import umfpack
+# from scikits.umfpack import splu
 import time
 import json
 from ...Solver.HelmholtzOperators import create_helmholtz2d_matrix
@@ -74,8 +74,7 @@ if __name__ == "__main__":
         )
 
         start_t = time.time()
-        # splu(mat)
-        umfpack.splu(mat)
+        splu(mat)
         end_t = time.time()
         return end_t - start_t
 
