@@ -28,7 +28,8 @@ if __name__ == "__main__":
         else:
             return ii + 1
 
-    fac = [1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0]
+    # fac = [1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0]
+    fac = [1.0, 2.0, 4.0, 8.0, 24.0]
     arr_n1 = [make_odd(int(n1_start * item)) for item in fac]
     arr_n2 = [make_odd(int(n2_start * item)) for item in fac]
 
