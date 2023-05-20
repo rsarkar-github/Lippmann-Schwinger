@@ -1,5 +1,4 @@
 import numpy as np
-from scipy.sparse import csc_matrix
 from scipy.sparse.linalg import splu
 import time
 from ...Solver.HelmholtzOperators import create_helmholtz2d_matrix
@@ -28,12 +27,9 @@ if __name__ == "__main__":
         else:
             return ii + 1
 
-    n1_start = make_odd(n1_start)
-    n2_start = make_odd(n2_start)
-
-    fac = [1.0, 2.0, 4.0, 6.0]
-    arr_n1 = [int(n1_start * item) for item in fac]
-    arr_n2 = [int(n2_start * item) for item in fac]
+    fac = [1.0, 2.0, 4.0, 6.0, 8.0, 10.0]
+    arr_n1 = [make_odd(int(n1_start * item)) for item in fac]
+    arr_n2 = [make_odd(int(n2_start * item)) for item in fac]
 
     a1_arr = []
     a2_arr = []
@@ -75,7 +71,7 @@ if __name__ == "__main__":
         )
 
         start_t = time.time()
-        mat_lu = splu(mat)
+        splu(mat)
         end_t = time.time()
         print("\nTotal time to LU factorize: ", "{:4.2f}".format(end_t - start_t), " s \n")
 
