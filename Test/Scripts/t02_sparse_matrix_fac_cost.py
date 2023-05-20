@@ -1,7 +1,7 @@
 import numpy as np
-# from scipy.sparse.linalg import splu
 from scipy.sparse import coo_matrix, csc_matrix
 from scipy import sparse
+# from scipy.sparse.linalg import splu
 from scikits.umfpack import splu
 import time
 import json
