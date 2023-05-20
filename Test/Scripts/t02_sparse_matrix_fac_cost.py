@@ -90,6 +90,9 @@ if __name__ == "__main__":
         mat2_cols = mat2.col + ndim
         mat2_data = mat2.data
 
+        print(mat1_rows.dtype)
+        print(mat2_rows.dtype)
+
         mat3_rows = np.concatenate((mat1_rows, mat2_rows))
         mat3_cols = np.concatenate((mat1_cols, mat2_cols))
         mat3_data = np.concatenate((mat1_data, mat2_data))
