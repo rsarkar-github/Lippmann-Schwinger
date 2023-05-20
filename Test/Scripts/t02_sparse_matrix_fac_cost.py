@@ -1,5 +1,7 @@
 import numpy as np
 from scipy.sparse.linalg import splu
+from scipy.sparse import coo_matrix, csc_matrix
+from scipy import sparse
 # from scikits.umfpack import splu
 import time
 import json
@@ -29,8 +31,8 @@ if __name__ == "__main__":
         else:
             return ii + 1
 
-    # fac = [1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0]
-    fac = [1.0, 2.0, 4.0, 32.0]
+    # fac = [1.0, 2.0, 4.0, 32.0]
+    fac = [1.0]
     arr_n1 = [make_odd(int(n1_start * item)) for item in fac]
     arr_n2 = [make_odd(int(n2_start * item)) for item in fac]
 
@@ -73,8 +75,28 @@ if __name__ == "__main__":
             warnings=True
         )
 
+        # Add identity to activate long indexing int64
+        mat1 = coo_matrix(mat)
+        ndim = mat1.shape[0]
+        mat1_rows = mat1.row
+        mat1_cols = mat1.col
+        mat1_data = mat1.data
+
+        int32_max = np.iinfo(np.int32).max
+        # int32_max = 100
+
+        mat2 = sparse.eye(int32_max, dtype=precision, format="coo")
+        mat2_rows = mat2.row + ndim
+        mat2_cols = mat2.col + ndim
+        mat2_data = mat2.data
+
+        mat3_rows = np.concatenate((mat1_rows, mat2_rows))
+        mat3_cols = np.concatenate((mat1_cols, mat2_cols))
+        mat3_data = np.concatenate((mat1_data, mat2_data))
+        mat3 = csc_matrix((mat3_data, (mat3_rows, mat3_cols)), shape=(n1 * n2 + int32_max, n1 * n2 + int32_max))
+
         start_t = time.time()
-        splu(mat)
+        splu(mat3)
         end_t = time.time()
         return end_t - start_t
 
