@@ -61,4 +61,7 @@ if __name__ == "__main__":
     plt.title('Marmousi-2 v(z) model')
     plt.xlabel('x [m]')
     plt.ylabel('z [m]')
+
+    savefig_fname = "Lippmann-Schwinger/Fig/marmousi-vp-vz-2d.pdf"
+    plt.savefig(savefig_fname, format="pdf", bbox_inches="tight", pad_inches=0.01)
     plt.show()
