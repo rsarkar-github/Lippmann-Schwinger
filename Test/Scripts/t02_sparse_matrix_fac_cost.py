@@ -1,8 +1,7 @@
 import numpy as np
 from scipy.sparse import coo_matrix, csc_matrix
 from scipy import sparse
-# from scipy.sparse.linalg import splu
-from scikits.umfpack import splu
+from scipy.sparse.linalg import splu
 import time
 import json
 from ...Solver.HelmholtzOperators import create_helmholtz2d_matrix
@@ -105,7 +104,7 @@ if __name__ == "__main__":
 
         b = np.ones(shape=(n1 * n2 + int32_max,), dtype=precision)
         start_t = time.time()
-        x = mat3lu.solve(b)
+        mat3lu.solve(b)
         end_t = time.time()
         t2 = end_t - start_t
 

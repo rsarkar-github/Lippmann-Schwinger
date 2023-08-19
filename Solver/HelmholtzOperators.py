@@ -30,6 +30,14 @@ def create_helmholtz2d_matrix(
     :return: Sparse Helmholtz matrix of shape (n1 * n2) x (n1 * n2), with grid points
     enumerated row wise, i.e. x2 followed by x1 directions.
 
+    *
+    *
+    *
+    x1
+    *
+    *
+    * * * x2 * * *
+
     Note: Dirichlet boundary conditions imposed on boundary layer of nodes, by adding an extra layer of nodes.
     """
 
@@ -1732,6 +1740,14 @@ def create_helmholtz2d_matrix_even(
     :return: Sparse Helmholtz matrix of shape (n1 * n2) x (n1 * n2), with grid points
     enumerated row wise, i.e. x2 followed by x1 directions.
 
+    *
+    *
+    *
+    x1
+    *
+    *
+    * * * x2 * * *
+
     Note: Dirichlet boundary conditions imposed on boundary layer of nodes, by adding an extra layer of nodes.
     """
 
@@ -1777,7 +1793,7 @@ def create_helmholtz2d_matrix_even(
     dmin = lambda_min / 10.0  # 10 points per minimum wavelength
 
     if warnings:
-        print("\n\n")
+        print("\n\nPrinting warnings \n")
 
         if d1 > dmin:
             print("Warning: Required dmin = ", "{:.2e}".format(dmin), ", Computed d1 = ", "{:.2e}".format(d1))
@@ -2103,3 +2119,4 @@ def create_helmholtz2d_matrix_even(
         mat = csc_matrix((data, (rows, cols)), shape=(n1 * n2, n1 * n2))
 
     return mat
+
