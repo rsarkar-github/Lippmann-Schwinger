@@ -1793,7 +1793,8 @@ def create_helmholtz2d_matrix_even(
     dmin = lambda_min / 10.0  # 10 points per minimum wavelength
 
     if warnings:
-        print("\n\nPrinting warnings \n")
+        print("\n\n"
+              "Printing warnings \n")
 
         if d1 > dmin:
             print("Warning: Required dmin = ", "{:.2e}".format(dmin), ", Computed d1 = ", "{:.2e}".format(d1))
