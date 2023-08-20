@@ -1,9 +1,9 @@
 import numpy as np
 from scipy import interpolate
-from scipy.sparse.linalg import LinearOperator, gmres
+from scipy.sparse.linalg import LinearOperator, gmres, lsqr
 from matplotlib import pyplot as plt
-from ...Solver.HelmholtzOperators import create_helmholtz2d_matrix_radial
-from ...Utilities import TypeChecker
+from ..Solver.HelmholtzOperators import create_helmholtz2d_matrix_radial
+from ..Utilities import TypeChecker
 
 
 def make_velocity_from_trace(vel_trace_, n1_, n2_):
@@ -81,13 +81,15 @@ def extend_vel_trace_1d(vel_trace_, pad_cells_):
 
 if __name__ == "__main__":
 
-    # Define velocity trace
-    n1_vel_trace = 100
-    vel_trace = np.zeros(shape=(n1_vel_trace, 1), dtype=np.float32)
-    vel_trace += 2.0   # in km/s
+    # Load Marmousi velocity trace
+    with np.load("Lippmann-Schwinger/Data/marmousi-vp-vz.npz") as data:
+        vel_trace = data["arr_0"]
+    vel_trace /= 1000.0
+    n1_vel_trace = vel_trace.shape[0]
+    vel_trace = np.reshape(vel_trace, newshape=(n1_vel_trace, 1))
 
     # Define frequency, calculate min & max wavelength
-    freq = 15.0
+    freq = 7.5
     omega = freq * 2 * np.pi
     precision = np.complex128
 
@@ -97,12 +99,12 @@ if __name__ == "__main__":
     lambda_max = vmax / freq
 
     # Set grid extent, & calculate minimum grid spacing
-    delta_base = lambda_min / 10.0
-    a1 = 100 * delta_base  # in km (should not change)
-    a2 = 100 * delta_base  # in km (should not change)
+    delta_base = 0.02
+    a1 = n1_vel_trace * delta_base  # in km (should not change)
+    a2 = 200 * delta_base           # in km (should not change)
 
     # Grid refining to do (different experiments)
-    fac = [1, 2, 4]
+    fac = [2]
 
     # Function for creating all objects for the experiment
     def create_objects_for_experiment(factor):
@@ -138,7 +140,7 @@ if __name__ == "__main__":
         x2 = np.linspace(start=0, stop=a2_pad, num=n2_, endpoint=True)
         x1v, x2v = np.meshgrid(x1, x2)
         sigma = delta_base
-        source = np.exp((-1) * ((x1v - a1_pad / 2) ** 2 + x2v ** 2) / (2 * sigma * sigma))
+        source = np.exp((-1) * ((x1v - a1_pad / 10) ** 2 + x2v ** 2) / (2 * sigma * sigma))
         source = source.T
 
         return a1_pad, a2_pad, pad1_cells, pad2_cells, vel, source
@@ -155,37 +157,49 @@ if __name__ == "__main__":
             omega=omega,
             precision=precision,
             vel=vel_array,
-            pml_damping=50.0,
+            pml_damping=100.0,
             adj=False,
+            warnings=True
+        )
+
+        mat_t = create_helmholtz2d_matrix_radial(
+            a1=a1_full,
+            a2=a2_full,
+            pad1=pad1,
+            pad2=pad2,
+            omega=omega,
+            precision=precision,
+            vel=vel_array,
+            pml_damping=100.0,
+            adj=True,
             warnings=True
         )
 
         n1, n2 = vel_array.shape
         print("n1 = ", n1, "n2 = ", n2)
 
-        # Callback generator
-        def make_callback():
-            closure_variables = dict(counter=0, residuals=[])
+        def forward_op(v):
+            return mat.dot(v)
+        def adjoint_op(v):
+            return mat_t.dot(v)
 
-            def callback(residuals):
-                closure_variables["counter"] += 1
-                closure_variables["residuals"].append(residuals)
-                print(closure_variables["counter"], residuals)
-
-            return callback
-
-        tol = 1e-3
-        sol, exitcode = gmres(
-            mat,
-            np.reshape(src, newshape=(n1 * n2, 1)),
-            maxiter=5000,
-            restart=5000,
-            atol=0,
-            tol=tol,
-            callback=make_callback()
+        linop = LinearOperator(
+            shape=(n1 * n2, n1 * n2),
+            matvec=forward_op,
+            rmatvec=adjoint_op,
+            dtype=precision
         )
+
+        tol = 1e-6
+
+        sol, istop, itn, r1norm = lsqr(
+            linop,
+            np.reshape(src, newshape=(n1 * n2, 1)),
+            atol=0,
+            btol=tol
+        )[:4]
         sol = np.reshape(sol, newshape=(n1, n2))
-        print(exitcode)
+        print(itn, r1norm)
 
         scale = 1e-4
         fig, ax = plt.subplots(1, 1)
