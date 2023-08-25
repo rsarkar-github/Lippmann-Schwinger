@@ -196,7 +196,8 @@ if __name__ == "__main__":
             linop,
             np.reshape(src, newshape=(n1 * n2, 1)),
             atol=0,
-            btol=tol
+            btol=tol,
+            show=True
         )[:4]
         sol = np.reshape(sol, newshape=(n1, n2))
         print(itn, r1norm)
