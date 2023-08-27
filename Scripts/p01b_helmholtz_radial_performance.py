@@ -88,6 +88,7 @@ if __name__ == "__main__":
     vel_trace /= 1000.0
     n1_vel_trace = vel_trace.shape[0]
     vel_trace = np.reshape(vel_trace, newshape=(n1_vel_trace, 1))
+    vel_trace = vel_trace * 0 + 2.0
 
     # Define frequency, calculate min & max wavelength
     freq = 7.5
@@ -105,7 +106,7 @@ if __name__ == "__main__":
     a2 = 200 * delta_base           # in km (should not change)
 
     # Grid refining to do (different experiments)
-    fac = [1]
+    fac = [2]
 
     # Function for creating all objects for the experiment
     def create_objects_for_experiment(factor):
@@ -141,7 +142,7 @@ if __name__ == "__main__":
         x2 = np.linspace(start=0, stop=a2_pad, num=n2_, endpoint=True)
         x1v, x2v = np.meshgrid(x1, x2)
         sigma = delta_base
-        source = np.exp((-1) * ((x1v - a1_pad / 10) ** 2 + x2v ** 2) / (2 * sigma * sigma))
+        source = np.exp((-1) * ((x1v - 5 * a1_pad / 10) ** 2 + (x2v - 0 * a1_pad / 10) ** 2) / (2 * sigma * sigma))
         source = source.T
 
         return a1_pad, a2_pad, pad1_cells, pad2_cells, vel, source
@@ -158,50 +159,17 @@ if __name__ == "__main__":
             omega=omega,
             precision=precision,
             vel=vel_array,
-            pml_damping=100.0,
+            pml_damping=50.0,
             adj=False,
-            warnings=True
-        )
-
-        mat_t = create_helmholtz2d_matrix_radial(
-            a1=a1_full,
-            a2=a2_full,
-            pad1=pad1,
-            pad2=pad2,
-            omega=omega,
-            precision=precision,
-            vel=vel_array,
-            pml_damping=100.0,
-            adj=True,
             warnings=True
         )
 
         n1, n2 = vel_array.shape
         print("n1 = ", n1, "n2 = ", n2)
 
-        def forward_op(v):
-            return mat.dot(v)
-        def adjoint_op(v):
-            return mat_t.dot(v)
-
-        linop = LinearOperator(
-            shape=(n1 * n2, n1 * n2),
-            matvec=forward_op,
-            rmatvec=adjoint_op,
-            dtype=precision
-        )
-
-        tol = 1e-6
-
-        sol, istop, itn, r1norm = lsqr(
-            linop,
-            np.reshape(src, newshape=(n1 * n2, 1)),
-            atol=0,
-            btol=tol,
-            show=True
-        )[:4]
+        mat_lu = splu(mat)
+        sol = mat_lu.solve(np.reshape(src, newshape=(n1 * n2, 1)))
         sol = np.reshape(sol, newshape=(n1, n2))
-        print(itn, r1norm)
 
         scale = 1e-4
         fig, ax = plt.subplots(1, 1)
