@@ -226,8 +226,8 @@ if __name__ == "__main__":
         sol, exitcode = gmres(
             mat_3d,
             np.reshape(src_3d, newshape=(n1 * n2_3d * n3_3d, 1)),
-            maxiter=5000,
-            restart=5000,
+            maxiter=100,
+            restart=100,
             atol=0,
             tol=tol,
             callback=make_callback()
