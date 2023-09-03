@@ -1,7 +1,7 @@
 import sys
 import numpy as np
 from scipy import interpolate
-from scipy.sparse.linalg import splu
+from scipy.sparse.linalg import gmres, lsqr, splu
 from matplotlib import pyplot as plt
 from ...Solver.HelmholtzOperators import create_helmholtz2d_matrix_radial, create_helmholtz3d_matrix
 from ...Utilities import TypeChecker
@@ -95,7 +95,7 @@ if __name__ == "__main__":
     # Define frequency, calculate min & max wavelength
     freq = 15.0
     omega = freq * 2 * np.pi
-    precision = np.complex128
+    precision = np.complex64
 
     vmin = np.min(vel_trace)
     vmax = np.max(vel_trace)
@@ -212,13 +212,21 @@ if __name__ == "__main__":
         n1, n2_3d, n3_3d = vel_array_3d.shape
         print("Number of grid points (3d)", "n1 = ", n1, ", n2_3d = ", n2_3d, ", n3_3d = ", n3_3d)
 
-        mat_3d_lu = splu(mat_3d)
-        sol = mat_3d_lu.solve(np.reshape(src_3d, newshape=(n1 * n2_3d * n3_3d, 1)))
+        tol = 1e-6
+        sol, istop, itn, r1norm = lsqr(
+            mat_3d,
+            np.reshape(src_3d, newshape=(n1 * n2_3d * n3_3d, 1)),
+            atol=0,
+            btol=tol,
+            show=True,
+            iter_lim=3000
+        )[:4]
+        print(itn, r1norm)
         sol2 = np.reshape(sol, newshape=(n1, n2_3d, n3_3d))[:, n2 - 1:, n2 - 1]
         sol2 = sol2[pad1: n1 - pad1, 0: n2 - pad2]
 
         if plot_flag:
-            scale = 1e-4
+            scale = 1e-5
             _, ax = plt.subplots(1, 1)
             _ = ax.imshow(np.real(sol2), cmap="Greys", vmin=-scale, vmax=scale)
             plt.show()
