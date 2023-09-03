@@ -1,7 +1,7 @@
 import sys
 import numpy as np
 from scipy import interpolate
-from scipy.sparse.linalg import gmres, splu
+from scipy.sparse.linalg import gmres, lsqr, splu
 from matplotlib import pyplot as plt
 from ...Solver.HelmholtzOperators import create_helmholtz2d_matrix_radial, create_helmholtz3d_matrix
 from ...Utilities import TypeChecker
@@ -157,7 +157,8 @@ if __name__ == "__main__":
         x3 = np.linspace(start=0, stop=2 * a2_pad, num=2 * (n2_ - 1) + 1, endpoint=True)
         x1v, x2v, x3v = np.meshgrid(x1, x2, x3, indexing="ij")
         sigma = delta_base
-        source_3d = np.exp((-1) * ((x1v - a1_pad / 2) ** 2 + x2v ** 2 + x3v ** 2) / (2 * sigma * sigma))
+        source_3d = np.exp((-1) * ((x1v - a1_pad / 2) ** 2 + (x2v - a2_pad) **
+                                   2 + (x3v - a2_pad) ** 2) / (2 * sigma * sigma))
 
         return a1_pad, a2_pad, pad1_cells, pad2_cells, vel, vel_3d, source, source_3d
 
@@ -223,15 +224,28 @@ if __name__ == "__main__":
             return callback
 
         tol = 1e-3
-        sol, exitcode = gmres(
+        # sol, exitcode = gmres(
+        #     mat_3d,
+        #     np.reshape(src_3d, newshape=(n1 * n2_3d * n3_3d, 1)),
+        #     maxiter=100,
+        #     restart=100,
+        #     atol=0,
+        #     tol=tol,
+        #     callback=make_callback()
+        # )
+        # sol2 = np.reshape(sol, newshape=(n1, n2_3d, n3_3d))[:, n2 - 1:, n2 - 1]
+        # sol2 = sol2[pad1: n1 - pad1, 0: n2 - pad2]
+
+        sol, istop, itn, r1norm = lsqr(
             mat_3d,
             np.reshape(src_3d, newshape=(n1 * n2_3d * n3_3d, 1)),
-            maxiter=100,
-            restart=100,
             atol=0,
-            tol=tol,
-            callback=make_callback()
-        )
+            btol=tol,
+            show=True,
+            iter_lim=1000
+        )[:4]
+        print(itn, r1norm)
+
         sol2 = np.reshape(sol, newshape=(n1, n2_3d, n3_3d))[:, n2 - 1:, n2 - 1]
         sol2 = sol2[pad1: n1 - pad1, 0: n2 - pad2]
 

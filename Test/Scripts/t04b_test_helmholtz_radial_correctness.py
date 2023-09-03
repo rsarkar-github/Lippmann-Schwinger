@@ -157,7 +157,8 @@ if __name__ == "__main__":
         x3 = np.linspace(start=0, stop=2 * a2_pad, num=2 * (n2_ - 1) + 1, endpoint=True)
         x1v, x2v, x3v = np.meshgrid(x1, x2, x3, indexing="ij")
         sigma = delta_base
-        source_3d = np.exp((-1) * ((x1v - a1_pad / 2) ** 2 + x2v ** 2 + x3v ** 2) / (2 * sigma * sigma))
+        source_3d = np.exp((-1) * ((x1v - a1_pad / 2) ** 2 + (x2v - a2_pad) **
+                                   2 + (x3v - a2_pad) ** 2) / (2 * sigma * sigma))
 
         return a1_pad, a2_pad, pad1_cells, pad2_cells, vel, vel_3d, source, source_3d
 
