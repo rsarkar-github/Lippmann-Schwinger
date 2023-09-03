@@ -1,8 +1,9 @@
+import sys
 import numpy as np
 from scipy import interpolate
-from scipy.sparse.linalg import LinearOperator, gmres
+from scipy.sparse.linalg import splu
 from matplotlib import pyplot as plt
-from ...Solver.HelmholtzOperators import create_helmholtz2d_matrix_even, create_helmholtz2d_matrix
+from ...Solver.HelmholtzOperators import create_helmholtz2d_matrix_radial, create_helmholtz3d_matrix
 from ...Utilities import TypeChecker
 
 
@@ -32,8 +33,8 @@ def make_velocity_from_trace(vel_trace_, n1_, n2_):
 
     vel_ = np.zeros(shape=(n1_, n2_), dtype=np.float32)
 
-    for i in range(n1_):
-        vel_[i, :] = val_out_[i, 0]
+    for ii in range(n1_):
+        vel_[ii, :] = val_out_[ii, 0]
 
     return vel_
 
@@ -81,6 +82,11 @@ def extend_vel_trace_1d(vel_trace_, pad_cells_):
 
 if __name__ == "__main__":
 
+    # Check arguments
+    if len(sys.argv) < 2:
+        raise ValueError("Program missing command line arguments.")
+    plot_flag = bool(int(sys.argv[1]))
+
     # Define velocity trace
     n1_vel_trace = 100
     vel_trace = np.zeros(shape=(n1_vel_trace, 1), dtype=np.float32)
@@ -102,7 +108,7 @@ if __name__ == "__main__":
     a2 = 100 * delta_base  # in km (should not change)
 
     # Grid refining to do (different experiments)
-    fac = [1, 2]
+    fac = [1]
 
     # Function for creating all objects for the experiment
     def create_objects_for_experiment(factor):
@@ -124,40 +130,42 @@ if __name__ == "__main__":
         )
 
         # Calculate grid points in each direction
-        n1 = int(np.round(a1_pad / delta) + 1)
-        n2 = int(np.round(a2_pad / delta) + 1)
+        n1_ = int(np.round(a1_pad / delta) + 1)
+        n2_ = int(np.round(a2_pad / delta) + 1)
         n1_vel = int(np.round(a1 / delta) + 1)
 
         # Modify vel_trace
         vel_trace_mod = make_velocity_from_trace(vel_trace_=vel_trace, n1_=n1_vel, n2_=1)
         vel_trace_mod = extend_vel_trace_1d(vel_trace_=vel_trace_mod, pad_cells_=pad1_cells)
-        vel = make_velocity_from_trace(vel_trace_=vel_trace_mod, n1_=n1, n2_=n2)
+        vel = make_velocity_from_trace(vel_trace_=vel_trace_mod, n1_=n1_, n2_=n2_)
 
-        vel_double = np.zeros(shape=(n1, 2 * (n2 - 1) + 1), dtype=vel.dtype)
-        vel_double[:, n2 - 1:] = vel
-        vel_double[:, 0: n2] = vel[:, ::-1]
+        vel_3d = np.zeros(shape=(n1_, 2 * (n2_ - 1) + 1, 2 * (n2_ - 1) + 1), dtype=vel.dtype)
+        vel_3d[:, n2_ - 1:, 0] = vel
+        vel_3d[:, 0: n2_, 0] = vel[:, ::-1]
+        for ii in range(vel_3d.shape[2]):
+            vel_3d[:, :, ii] = vel_3d[:, :, 0]
 
         # Create source centered at original grid (x2 = 0, x1 = a1 / 2, gaussian std = delta)
-        x1 = np.linspace(start=0, stop=a1_pad, num=n1, endpoint=True)
-        x2 = np.linspace(start=0, stop=a2_pad, num=n2, endpoint=True)
-        x1v, x2v = np.meshgrid(x1, x2)
+        x1 = np.linspace(start=0, stop=a1_pad, num=n1_, endpoint=True)
+        x2 = np.linspace(start=0, stop=a2_pad, num=n2_, endpoint=True)
+        x1v, x2v = np.meshgrid(x1, x2, indexing="ij")
         sigma = delta_base
         source = np.exp((-1) * ((x1v - a1_pad / 2) ** 2 + x2v ** 2) / (2 * sigma * sigma))
-        source = source.T
 
-        source_double = np.zeros(shape=(n1, 2 * (n2 - 1) + 1), dtype=source.dtype)
-        source_double[:, n2-1:] = source
-        source_double[:, 0: n2] = source[:, ::-1]
+        x1 = np.linspace(start=0, stop=a1_pad, num=n1_, endpoint=True)
+        x2 = np.linspace(start=0, stop=2 * a2_pad, num=2 * (n2_ - 1) + 1, endpoint=True)
+        x3 = np.linspace(start=0, stop=2 * a2_pad, num=2 * (n2_ - 1) + 1, endpoint=True)
+        x1v, x2v, x3v = np.meshgrid(x1, x2, x3, indexing="ij")
+        sigma = delta_base
+        source_3d = np.exp((-1) * ((x1v - a1_pad / 2) ** 2 + x2v ** 2 + x3v ** 2) / (2 * sigma * sigma))
 
-        return a1_pad, a2_pad, pad1_cells, pad2_cells, vel, vel_double, source, source_double
-
+        return a1_pad, a2_pad, pad1_cells, pad2_cells, vel, vel_3d, source, source_3d
 
     for i, item in enumerate(fac):
 
-        a1_full, a2_full, pad1, pad2, vel_array, vel_array_double, src, src_double = \
-            create_objects_for_experiment(factor=item)
+        a1_full, a2_full, pad1, pad2, vel_array, vel_array_3d, src, src_3d = create_objects_for_experiment(factor=item)
 
-        mat = create_helmholtz2d_matrix_even(
+        mat = create_helmholtz2d_matrix_radial(
             a1=a1_full,
             a2=a2_full,
             pad1=pad1,
@@ -167,88 +175,50 @@ if __name__ == "__main__":
             vel=vel_array,
             pml_damping=50.0,
             adj=False,
-            warnings=True
+            warnings=False
         )
 
         n1, n2 = vel_array.shape
-        print("n1 = ", n1, "n2 = ", n2)
+        print("-----------------------------------------------------")
+        print("Refining factor = ", item)
+        print("Number of grid points", "n1 = ", n1, ", n2 = ", n2)
 
-        def forward_op(v):
-            return mat.dot(v)
-
-        # Define linear operator
-        linop = LinearOperator(
-            shape=(n1 * n2, n1 * n2),
-            matvec=forward_op,
-            dtype=precision
-        )
-        # Callback generator
-        def make_callback():
-            closure_variables = dict(counter=0, residuals=[])
-
-            def callback(residuals):
-                closure_variables["counter"] += 1
-                closure_variables["residuals"].append(residuals)
-                print(closure_variables["counter"], residuals)
-
-            return callback
-
-        tol = 1e-3
-        sol, exitcode = gmres(
-            linop,
-            np.reshape(src.astype(precision), newshape=(n1 * n2, 1)),
-            maxiter=5000,
-            restart=5000,
-            atol=0,
-            tol=tol,
-            callback=make_callback()
-        )
+        mat_lu = splu(mat)
+        sol = mat_lu.solve(np.reshape(src.astype(precision), newshape=(n1 * n2, 1)))
         sol1 = np.reshape(sol, newshape=(n1, n2))
-        print(exitcode)
 
-        scale = 1e-4
-        fig, ax = plt.subplots(1, 1)
-        im = ax.imshow(np.real(sol1), cmap="Greys", vmin=-scale, vmax=scale)
-        plt.show()
+        if plot_flag:
+            scale = 1e-4
+            _, ax = plt.subplots(1, 1)
+            _ = ax.imshow(np.real(sol1), cmap="Greys", vmin=-scale, vmax=scale)
+            plt.show()
 
-        mat_double = create_helmholtz2d_matrix(
+        mat_3d = create_helmholtz3d_matrix(
             a1=a1_full,
             a2=2 * a2_full,
+            a3=2 * a2_full,
             pad1=pad1,
             pad2=pad2,
+            pad3=pad2,
             omega=omega,
             precision=precision,
-            vel=vel_array_double,
+            vel=vel_array_3d,
             pml_damping=50.0,
             adj=False,
-            warnings=True
+            warnings=False
         )
-        n1, n2_double = vel_array_double.shape
-        print("n1 = ", n1, "n2_double = ", n2_double)
-        def forward_op(v):
-            return mat_double.dot(v)
+        n1, n2_3d, n3_3d = vel_array_3d.shape
+        print("Number of grid points (3d)", "n1 = ", n1, ", n2_3d = ", n2_3d, ", n3_3d = ", n3_3d)
 
-        # Define linear operator
-        linop = LinearOperator(
-            shape=(n1 * n2_double, n1 * n2_double),
-            matvec=forward_op,
-            dtype=precision
-        )
+        mat_3d_lu = splu(mat_3d)
+        sol = mat_3d_lu.solve(np.reshape(src_3d, newshape=(n1 * n2_3d * n3_3d, 1)))
+        sol2 = np.reshape(sol, newshape=(n1, n2_3d, n3_3d))[:, n2 - 1:, n2 - 1]
 
-        sol, exitcode = gmres(
-            linop,
-            np.reshape(src_double, newshape=(n1 * n2_double, 1)),
-            maxiter=5000,
-            restart=5000,
-            atol=0,
-            tol=tol,
-            callback=make_callback()
-        )
-        sol2 = np.reshape(sol, newshape=(n1, n2_double))[:, n2 - 1:]
+        if plot_flag:
+            scale = 1e-4
+            _, ax = plt.subplots(1, 1)
+            _ = ax.imshow(np.real(sol2), cmap="Greys", vmin=-scale, vmax=scale)
+            plt.show()
 
-        scale = 1e-4
-        fig, ax = plt.subplots(1, 1)
-        im = ax.imshow(np.real(sol2), cmap="Greys", vmin=-scale, vmax=scale)
-        plt.show()
-
-        print(np.linalg.norm(sol1 - sol2))
+        print("Norm of difference of computed solutions = ", np.linalg.norm(sol1 - sol2))
+        print("\n")
