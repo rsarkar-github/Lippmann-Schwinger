@@ -95,7 +95,7 @@ if __name__ == "__main__":
     # Define frequency, calculate min & max wavelength
     freq = 15.0
     omega = freq * 2 * np.pi
-    precision = np.complex128
+    precision = np.complex64
 
     vmin = np.min(vel_trace)
     vmax = np.max(vel_trace)
@@ -104,8 +104,8 @@ if __name__ == "__main__":
 
     # Set grid extent, & calculate minimum grid spacing
     delta_base = lambda_min / 10.0
-    a1 = 100 * delta_base  # in km (should not change)
-    a2 = 50 * delta_base  # in km (should not change)
+    a1 = 50 * delta_base  # in km (should not change)
+    a2 = 25 * delta_base  # in km (should not change)
 
     # Grid refining to do (different experiments)
     fac = [1]
@@ -212,45 +212,21 @@ if __name__ == "__main__":
         n1, n2_3d, n3_3d = vel_array_3d.shape
         print("Number of grid points (3d)", "n1 = ", n1, ", n2_3d = ", n2_3d, ", n3_3d = ", n3_3d)
 
-        # Callback generator
-        def make_callback():
-            closure_variables = dict(counter=0, residuals=[])
-
-            def callback(residuals):
-                closure_variables["counter"] += 1
-                closure_variables["residuals"].append(residuals)
-                print(closure_variables["counter"], residuals)
-
-            return callback
-
-        tol = 1e-3
-        # sol, exitcode = gmres(
-        #     mat_3d,
-        #     np.reshape(src_3d, newshape=(n1 * n2_3d * n3_3d, 1)),
-        #     maxiter=100,
-        #     restart=100,
-        #     atol=0,
-        #     tol=tol,
-        #     callback=make_callback()
-        # )
-        # sol2 = np.reshape(sol, newshape=(n1, n2_3d, n3_3d))[:, n2 - 1:, n2 - 1]
-        # sol2 = sol2[pad1: n1 - pad1, 0: n2 - pad2]
-
+        tol = 1e-6
         sol, istop, itn, r1norm = lsqr(
             mat_3d,
             np.reshape(src_3d, newshape=(n1 * n2_3d * n3_3d, 1)),
             atol=0,
             btol=tol,
             show=True,
-            iter_lim=1000
+            iter_lim=3000
         )[:4]
         print(itn, r1norm)
-
         sol2 = np.reshape(sol, newshape=(n1, n2_3d, n3_3d))[:, n2 - 1:, n2 - 1]
         sol2 = sol2[pad1: n1 - pad1, 0: n2 - pad2]
 
         if plot_flag:
-            scale = 1e-4
+            scale = 1e-5
             _, ax = plt.subplots(1, 1)
             _ = ax.imshow(np.real(sol2), cmap="Greys", vmin=-scale, vmax=scale)
             plt.show()

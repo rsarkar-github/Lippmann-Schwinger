@@ -104,8 +104,8 @@ if __name__ == "__main__":
 
     # Set grid extent, & calculate minimum grid spacing
     delta_base = lambda_min / 10.0
-    a1 = 100 * delta_base  # in km (should not change)
-    a2 = 50 * delta_base  # in km (should not change)
+    a1 = 50 * delta_base  # in km (should not change)
+    a2 = 25 * delta_base  # in km (should not change)
 
     # Grid refining to do (different experiments)
     fac = [1]
