@@ -2203,6 +2203,8 @@ def create_helmholtz2d_matrix_radial(
     pml_width2 = d2 * pad_cells2
     dmin = lambda_min / 10.0  # 10 points per minimum wavelength
 
+    print(d1, d2)
+
     if warnings:
         print("\n\n"
               "Printing warnings \n")

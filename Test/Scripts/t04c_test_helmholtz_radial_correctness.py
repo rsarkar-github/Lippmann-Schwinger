@@ -13,7 +13,7 @@ if __name__ == "__main__":
     n = 201
     d = 1.0 / (n - 1)
     precision = np.complex64
-    f = 15.0
+    f = 10.0
     v0 = 1.0
     k = 2 * np.pi * f / v0
     sigma = 0.03
@@ -23,7 +23,7 @@ if __name__ == "__main__":
         grid = np.linspace(start=-0.5, stop=0.5, num=n, endpoint=True)
         x1, y1, z1 = np.meshgrid(grid, grid, grid, indexing="ij")
         u = np.exp(-1.0 * (x1 ** 2 + y1 ** 2 + z1 ** 2) / (2 * sigma * sigma))
-        u *= (1.0 / (sigma ** 3)) / ((2 * np.pi) ** 1.5)
+        # u *= (1.0 / (sigma ** 3)) / ((2 * np.pi) ** 1.5)
         u = u.astype(precision)
 
         return u
@@ -55,7 +55,8 @@ if __name__ == "__main__":
         u1 = np.zeros(shape=(n1, n2), dtype=precision)
         u1[10:211, 0:101] = u[:, 100:, int(n/2)]
 
-        plt.imshow(np.real(u1), cmap="Greys")
+        # plt.imshow(np.real(u1), cmap="Greys")
+        plt.imshow(np.real(u[:, :, int(n/2)]), cmap="Greys")
         plt.show()
 
         mat_lu = splu(mat)
@@ -65,11 +66,11 @@ if __name__ == "__main__":
         return sol2
 
     sol2 = helmholtz()
-    scale = 0.1
+    scale = 1e-4
     plt.imshow(np.real(sol2), cmap="Greys", vmin=-scale, vmax=scale)
     plt.show()
 
-    # exit(1)
+    exit(1)
 
     def lippmann_schwinger():
 
