@@ -1,7 +1,7 @@
 import sys
 import numpy as np
 from scipy import interpolate
-from scipy.sparse.linalg import splu
+from scipy.sparse.linalg import gmres, splu
 from matplotlib import pyplot as plt
 from ...Solver.HelmholtzOperators import create_helmholtz2d_matrix_radial, create_helmholtz3d_matrix
 from ...Utilities import TypeChecker
@@ -211,8 +211,27 @@ if __name__ == "__main__":
         n1, n2_3d, n3_3d = vel_array_3d.shape
         print("Number of grid points (3d)", "n1 = ", n1, ", n2_3d = ", n2_3d, ", n3_3d = ", n3_3d)
 
-        mat_3d_lu = splu(mat_3d)
-        sol = mat_3d_lu.solve(np.reshape(src_3d, newshape=(n1 * n2_3d * n3_3d, 1)))
+        # Callback generator
+        def make_callback():
+            closure_variables = dict(counter=0, residuals=[])
+
+            def callback(residuals):
+                closure_variables["counter"] += 1
+                closure_variables["residuals"].append(residuals)
+                print(closure_variables["counter"], residuals)
+
+            return callback
+
+        tol = 1e-3
+        sol, exitcode = gmres(
+            mat_3d,
+            np.reshape(src_3d, newshape=(n1 * n2_3d * n3_3d, 1)),
+            maxiter=5000,
+            restart=5000,
+            atol=0,
+            tol=tol,
+            callback=make_callback()
+        )
         sol2 = np.reshape(sol, newshape=(n1, n2_3d, n3_3d))[:, n2 - 1:, n2 - 1]
         sol2 = sol2[pad1: n1 - pad1, 0: n2 - pad2]
 
