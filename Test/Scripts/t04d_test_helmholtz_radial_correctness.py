@@ -64,10 +64,12 @@ if __name__ == "__main__":
         atol=0,
         btol=tol,
         show=True,
-        iter_lim=3000
+        iter_lim=100
     )[:4]
     print(itn, r1norm)
     sol2 = np.reshape(sol, newshape=(n1, n1, n1))[10:211, 10:211, 10:211]
+
+    print("Relative error = ", np.linalg.norm(sol1 - sol2) / np.linalg.norm(sol1))
 
     scale = 1e-4
     plt.imshow(np.real(sol1[:, :, int(n/2)]), cmap="Greys", vmin=-scale, vmax=scale)
