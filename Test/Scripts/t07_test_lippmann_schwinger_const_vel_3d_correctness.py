@@ -11,7 +11,7 @@ if __name__ == "__main__":
     n = 201
     d = 1.0 / (n - 1)
     precision = np.complex64
-    f = 1.0
+    f = 2.0
     v0 = 1.0
     k = 2 * np.pi * f / v0
 
