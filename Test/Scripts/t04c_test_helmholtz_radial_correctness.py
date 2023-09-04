@@ -7,6 +7,8 @@ from ...Solver.HelmholtzOperators import create_helmholtz2d_matrix_radial
 from ...Solver.ScatteringIntegralConstantVelStorageOptimized import TruncatedKernelConstantVel3d
 
 
+# TODO: problems detected with Helmholtz 3D and radial solvers
+
 if __name__ == "__main__":
 
     # Lippmann-Schwinger solver
@@ -69,8 +71,6 @@ if __name__ == "__main__":
     scale = 1e-4
     plt.imshow(np.real(sol2), cmap="Greys", vmin=-scale, vmax=scale)
     plt.show()
-
-    exit(1)
 
     def lippmann_schwinger():
 
