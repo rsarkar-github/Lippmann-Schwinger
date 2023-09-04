@@ -811,10 +811,10 @@ class TruncatedKernelGeneralVz3D:
         lambda_min = 2 * np.pi * vmin / self._k
         grid_min = min(self._d, self._dz)
 
-        if grid_min < 5 * lambda_min:
+        if grid_min >= lambda_min / 5.0:
             raise ValueError("Minimum grid spacing condition violated")
 
-        if grid_min < 10 * lambda_min:
+        if grid_min >= lambda_min / 10.0:
             print("\nWarning: Recommended minimum grid spacing "
                   "is 10 times smallest wave length.\n")
 
@@ -1502,10 +1502,10 @@ class TruncatedKernelGeneralVz2d:
         lambda_min = 2 * np.pi * vmin / self._k
         grid_min = min(self._d, self._dz)
 
-        if grid_min < 5 * lambda_min:
+        if grid_min >= lambda_min / 5.0:
             raise ValueError("Minimum grid spacing condition violated")
 
-        if grid_min < 10 * lambda_min:
+        if grid_min >= lambda_min / 10.0:
             print("\nWarning: Recommended minimum grid spacing "
                   "is 10 times smallest wave length.\n")
 
@@ -1579,7 +1579,7 @@ class TruncatedKernelGeneralVz2d:
         self._zgrid = np.linspace(start=self._a, stop=self._b, num=self._nz, endpoint=True)
 
         # Check grid size
-        # self.__check_grid_size()
+        self.__check_grid_size()
 
         # Calculate cutoff functions
         self._cutoff_func_coarse_grid = self.__calculate_cutoff_func()
@@ -1599,8 +1599,8 @@ if __name__ == "__main__":
     # ----------------------------------------------
     # 2d Test
 
-    n_ = 201
-    nz_ = 201
+    n_ = 101
+    nz_ = 101
     a_ = 0.
     b_ = a_ + (1.0 / (n_ - 1)) * (nz_ - 1)
     freq_ = 10.0
