@@ -8,7 +8,7 @@ if __name__ == "__main__":
     with np.load("Lippmann-Schwinger/Data/marmousi-vp.npz") as data:
         vp = data["arr_0"]
 
-    # Get shape
+    # Get shape (500, 174)
     nx, nz = vp.shape
 
     # ------------------------
