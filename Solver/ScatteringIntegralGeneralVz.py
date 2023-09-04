@@ -967,7 +967,7 @@ class TruncatedKernelGeneralVz3D:
 
 class TruncatedKernelGeneralVz2d:
 
-    def __init__(self, n, nz, a, b, k, vz, m, sigma, precision, green_func_dir, verbose=False, light_mode=False):
+    def __init__(self, n, nz, a, b, k, vz, m, sigma, precision, green_func_dir, num_threads, verbose=False, light_mode=False):
         """
         The Helmholtz equation reads (lap + k^2 / vz^2)u = f, on the domain [a,b] x [-0.5, 0.5].
 
@@ -983,6 +983,7 @@ class TruncatedKernelGeneralVz2d:
         :param sigma: The standard deviation of delta to inject for Green's function calculation.
         :param precision: np.complex64 or np.complex128
         :param green_func_dir: Name of directory where to read / write Green's function from.
+        :param num_threads: Maximum number of threads to use
         :param verbose: bool (if True print messages during Green's function calculation).
         :param light_mode: bool (if True an empty class is initialized)
         """
@@ -1019,6 +1020,7 @@ class TruncatedKernelGeneralVz2d:
             if not os.path.exists(green_func_dir):
                 os.makedirs(green_func_dir)
 
+            TypeChecker.check_int_positive(x=num_threads)
             TypeChecker.check(x=verbose, expected_type=(bool,))
 
             self._n = n
@@ -1031,6 +1033,7 @@ class TruncatedKernelGeneralVz2d:
             self._sigma = sigma
             self._precision = precision
             self._green_func_dir = green_func_dir
+            self._num_threads = num_threads
             self._verbose = verbose
 
             self._cutoff1 = 1.0
@@ -1039,7 +1042,7 @@ class TruncatedKernelGeneralVz2d:
             # Run class initializer
             self.__initialize_class()
 
-    def set_parameters(self, n, nz, a, b, k, vz, m, sigma, precision, green_func_dir, verbose=False):
+    def set_parameters(self, n, nz, a, b, k, vz, m, sigma, precision, green_func_dir, num_threads, verbose=False):
         """
         The Helmholtz equation reads (lap + k^2 / vz^2)u = f, on the domain [a,b] x [-0.5, 0.5].
 
@@ -1054,6 +1057,7 @@ class TruncatedKernelGeneralVz2d:
         :param m: Decimation factor for calculating Green's function on a fine grid.
         :param sigma: The standard deviation of delta to inject for Green's function calculation.
         :param precision: np.complex64 or np.complex128
+        :param num_threads: Maximum number of threads to use
         :param verbose: bool (if True print messages during Green's function calculation).
         :param green_func_dir: Name of directory where to read / write Green's function from.
         """
@@ -1096,6 +1100,7 @@ class TruncatedKernelGeneralVz2d:
             print("Class set_parameters method failed. Exiting without changes to class.")
             print("\n")
 
+        TypeChecker.check_int_positive(x=num_threads)
         TypeChecker.check(x=verbose, expected_type=(bool,))
 
         self._n = n
@@ -1108,6 +1113,7 @@ class TruncatedKernelGeneralVz2d:
         self._sigma = sigma
         self._precision = precision
         self._green_func_dir = green_func_dir
+        self._num_threads = num_threads
         self._verbose = verbose
 
         self._cutoff1 = 1.0
@@ -1388,7 +1394,7 @@ class TruncatedKernelGeneralVz2d:
                 ) for ii in range(self._nz)
             ]
 
-            with Pool(min(len(param_tuple_list), mp.cpu_count())) as pool:
+            with Pool(min(len(param_tuple_list), mp.cpu_count(), self._num_threads)) as pool:
                 max_ = len(param_tuple_list)
 
                 with tqdm(total=max_) as pbar:
@@ -1565,7 +1571,7 @@ if __name__ == "__main__":
     sigma_ = 0.004
     precision_ = np.complex64
     green_func_dir_ = "Lippmann-Schwinger/Test/Data"
-
+    num_threads_ = 20
     vz_ = np.zeros(shape=(nz_, 1), dtype=np.float32) + 1.0
 
     op = TruncatedKernelGeneralVz2d(
@@ -1579,6 +1585,7 @@ if __name__ == "__main__":
         sigma=sigma_,
         precision=precision_,
         green_func_dir=green_func_dir_,
+        num_threads=num_threads_,
         verbose=False,
         light_mode=False
     )
