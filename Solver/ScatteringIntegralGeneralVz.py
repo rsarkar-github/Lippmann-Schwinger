@@ -70,6 +70,9 @@ def func_helper2D(params):
     num_slice = params[11]
     sm_name = params[12]
 
+    if num_slice == 0:
+        print("nz = ", nz, ", nx = ", nx)
+
     # ------------------------------------------------------------
     # Create source
 
@@ -1571,7 +1574,7 @@ if __name__ == "__main__":
     sigma_ = 0.004
     precision_ = np.complex64
     green_func_dir_ = "Lippmann-Schwinger/Test/Data"
-    num_threads_ = 20
+    num_threads_ = 8
     vz_ = np.zeros(shape=(nz_, 1), dtype=np.float32) + 1.0
 
     op = TruncatedKernelGeneralVz2d(
