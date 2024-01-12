@@ -16,6 +16,7 @@ if __name__ == "__main__":
     k = 2 * np.pi * f / v0
 
     # Compute analytical solution
+    # Correct expression (lap + k^2)u = f
     def analytical():
 
         sol_true = np.zeros(shape=(n, n, n), dtype=precision)

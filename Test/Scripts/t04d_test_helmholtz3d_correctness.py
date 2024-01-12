@@ -9,7 +9,7 @@ from ...Solver.ScatteringIntegralConstantVelStorageOptimized import TruncatedKer
 if __name__ == "__main__":
 
     # Lippmann-Schwinger solver
-    n = 201
+    n = 301
     d = 1.0 / (n - 1)
     precision = np.complex64
     f = 10.0
@@ -99,17 +99,6 @@ if __name__ == "__main__":
             callback=make_callback()
         )
         print("\nExitcode ", exitcode)
-
-        # # LSQR
-        # sol, istop, itn, r1norm = lsqr(
-        #     mat_3d,
-        #     np.reshape(u1, newshape=(n1 * n2 * n3, 1)),
-        #     atol=0,
-        #     btol=tol,
-        #     show=True,
-        #     iter_lim=3000
-        # )[:4]
-        # print(itn, r1norm)
 
         sol = np.reshape(sol, newshape=(n1, n2, n3))
 
