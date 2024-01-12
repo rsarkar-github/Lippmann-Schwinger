@@ -109,14 +109,14 @@ if __name__ == "__main__":
         #     iter_lim=3000
         # )[:4]
         # print(itn, r1norm)
-        
+
         sol = np.reshape(sol, newshape=(n1, n2, n3))
 
         return sol[pml_cells:pml_cells+n, pml_cells:pml_cells+n, pml_cells:pml_cells+n]
 
     sol2 = helmholtz3d()
     sol2_plot = sol2[:, :, int(n/2)]
-    plt.imshow(np.real(sol2), cmap="Greys", vmin=-scale, vmax=scale)
+    plt.imshow(np.real(sol2_plot), cmap="Greys", vmin=-scale, vmax=scale)
     plt.show()
 
     print("Relative error = ", np.linalg.norm(sol1 - sol2) / np.linalg.norm(sol1))
