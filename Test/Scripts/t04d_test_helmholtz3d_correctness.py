@@ -50,9 +50,9 @@ if __name__ == "__main__":
     def helmholtz3d():
 
         pml_cells = 10
-        n1 = n + 2.0 * pml_cells
-        n2 = n + 2.0 * pml_cells
-        n3 = n + 2.0 * pml_cells
+        n1 = n + 2 * pml_cells
+        n2 = n + 2 * pml_cells
+        n3 = n + 2 * pml_cells
         vel_array_3d = np.zeros(shape=(n1, n2, n3), dtype=np.float32) + v0
         omega = 2 * np.pi * f
         a1 = d * (n1 - 1)
