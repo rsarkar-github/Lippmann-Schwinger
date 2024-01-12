@@ -1,6 +1,6 @@
 import numpy as np
 import time
-from scipy.sparse.linalg import lsqr
+from scipy.sparse.linalg import lsqr, gmres
 from matplotlib import pyplot as plt
 from ...Solver.HelmholtzOperators import create_helmholtz3d_matrix
 from ...Solver.ScatteringIntegralConstantVelStorageOptimized import TruncatedKernelConstantVel3d
@@ -9,7 +9,7 @@ from ...Solver.ScatteringIntegralConstantVelStorageOptimized import TruncatedKer
 if __name__ == "__main__":
 
     # Lippmann-Schwinger solver
-    n = 201
+    n = 101
     d = 1.0 / (n - 1)
     precision = np.complex64
     f = 10.0
@@ -47,6 +47,17 @@ if __name__ == "__main__":
     plt.imshow(np.real(sol1_plot), cmap="Greys", vmin=-scale, vmax=scale)
     plt.show()
 
+
+    def make_callback():
+        closure_variables = dict(counter=0, residuals=[])
+
+        def callback(residuals):
+            closure_variables["counter"] += 1
+            closure_variables["residuals"].append(residuals)
+            print(closure_variables["counter"], residuals)
+
+        return callback
+
     def helmholtz3d():
 
         pml_cells = 10
@@ -78,15 +89,27 @@ if __name__ == "__main__":
         u1[pml_cells:pml_cells+n, pml_cells:pml_cells+n, pml_cells:pml_cells+n] += u
 
         tol = 1e-6
-        sol, istop, itn, r1norm = lsqr(
+
+        # GMRES
+        sol, exitcode = gmres(
             mat_3d,
             np.reshape(u1, newshape=(n1 * n2 * n3, 1)),
-            atol=0,
-            btol=tol,
-            show=True,
-            iter_lim=3000
-        )[:4]
-        print(itn, r1norm)
+            maxiter=10000,
+            restart=1000,
+            callback=make_callback()
+        )
+
+        # # LSQR
+        # sol, istop, itn, r1norm = lsqr(
+        #     mat_3d,
+        #     np.reshape(u1, newshape=(n1 * n2 * n3, 1)),
+        #     atol=0,
+        #     btol=tol,
+        #     show=True,
+        #     iter_lim=3000
+        # )[:4]
+        # print(itn, r1norm)
+        
         sol = np.reshape(sol, newshape=(n1, n2, n3))
 
         return sol[pml_cells:pml_cells+n, pml_cells:pml_cells+n, pml_cells:pml_cells+n]
