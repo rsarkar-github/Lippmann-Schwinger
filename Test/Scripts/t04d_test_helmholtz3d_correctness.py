@@ -1,3 +1,6 @@
+# Estimated runtime: 5-6hrs
+# Performs about 3017 GMRES iterations
+
 import numpy as np
 import time
 from scipy.sparse.linalg import lsqr, gmres
