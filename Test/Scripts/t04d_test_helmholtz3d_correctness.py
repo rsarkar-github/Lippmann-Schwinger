@@ -41,10 +41,10 @@ if __name__ == "__main__":
         return sol
 
     sol1 = lippmann_schwinger()
-    sol1 = sol1[:, int(n/2):, int(n/2)]
+    sol1_plot = sol1[:, :, int(n/2)]
 
     scale = 1e-4
-    plt.imshow(np.real(sol1[:, :, int(n/2)]), cmap="Greys", vmin=-scale, vmax=scale)
+    plt.imshow(np.real(sol1_plot), cmap="Greys", vmin=-scale, vmax=scale)
     plt.show()
 
     def helmholtz3d():
@@ -89,11 +89,11 @@ if __name__ == "__main__":
         print(itn, r1norm)
         sol = np.reshape(sol, newshape=(n1, n2, n3))
 
-        return sol
+        return sol[pml_cells:pml_cells+n, pml_cells:pml_cells+n, pml_cells:pml_cells+n]
 
     sol2 = helmholtz3d()
-    scale = 1e-4
-    plt.imshow(np.real(sol2[:, :, int(n/2)]), cmap="Greys", vmin=-scale, vmax=scale)
+    sol2_plot = sol2[:, :, int(n/2)]
+    plt.imshow(np.real(sol2), cmap="Greys", vmin=-scale, vmax=scale)
     plt.show()
 
     print("Relative error = ", np.linalg.norm(sol1 - sol2) / np.linalg.norm(sol1))
