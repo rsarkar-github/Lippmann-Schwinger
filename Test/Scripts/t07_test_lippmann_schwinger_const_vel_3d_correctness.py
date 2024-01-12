@@ -39,7 +39,7 @@ if __name__ == "__main__":
                         t = t * np.exp(-j * k * r)
                         t = np.real(t) - j * np.sin(k * r)
                         t = t * np.exp(-0.5 * k * k * sigma * sigma) / (4 * np.pi * r)
-                        sol_true[i1, i2, i3] = -t
+                        sol_true[i1, i2, i3] = t
 
         return sol_true
 
