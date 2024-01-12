@@ -7,7 +7,7 @@ from ...Solver.HelmholtzOperators import create_helmholtz2d_matrix_radial
 from ...Solver.ScatteringIntegralConstantVelStorageOptimized import TruncatedKernelConstantVel3d
 
 
-# TODO: problems detected with Helmholtz 3D and radial solvers
+# TODO: problems detected with radial solvers
 
 if __name__ == "__main__":
 

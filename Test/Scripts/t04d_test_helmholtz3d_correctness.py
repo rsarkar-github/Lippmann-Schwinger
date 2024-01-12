@@ -95,7 +95,7 @@ if __name__ == "__main__":
             mat_3d,
             np.reshape(u1, newshape=(n1 * n2 * n3, 1)),
             maxiter=10000,
-            restart=100,
+            restart=50,
             callback=make_callback()
         )
         print("\nExitcode ", exitcode)
