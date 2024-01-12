@@ -87,8 +87,8 @@ if __name__ == "__main__":
     sol1 = lippmann_schwinger()
     sol1 = sol1[:, 100:, int(n/2)]
 
-    scale = 0.1
+    # scale = 0.1
     plt.imshow(np.real(sol1), cmap="Greys", vmin=-scale, vmax=scale)
     plt.show()
 
-    print("Relative error = ", np.linalg.norm(sol1 - sol2) / np.linalg.norm(sol1))
+    print("Relative error = ", np.linalg.norm(sol1 + sol2) / np.linalg.norm(sol1))

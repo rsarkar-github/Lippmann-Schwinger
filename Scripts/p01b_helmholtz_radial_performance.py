@@ -106,7 +106,7 @@ if __name__ == "__main__":
     a2 = 200 * delta_base           # in km (should not change)
 
     # Grid refining to do (different experiments)
-    fac = [2]
+    fac = [4]
 
     # Function for creating all objects for the experiment
     def create_objects_for_experiment(factor):
@@ -171,7 +171,7 @@ if __name__ == "__main__":
         sol = mat_lu.solve(np.reshape(src, newshape=(n1 * n2, 1)))
         sol = np.reshape(sol, newshape=(n1, n2))
 
-        scale = 1e-4
+        scale = 1e-3
         fig, ax = plt.subplots(1, 1)
         im = ax.imshow(np.real(sol), cmap="Greys", vmin=-scale, vmax=scale)
         plt.show()
