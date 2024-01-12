@@ -98,6 +98,7 @@ if __name__ == "__main__":
             restart=1000,
             callback=make_callback()
         )
+        print("\nExitcode ", exitcode)
 
         # # LSQR
         # sol, istop, itn, r1norm = lsqr(
