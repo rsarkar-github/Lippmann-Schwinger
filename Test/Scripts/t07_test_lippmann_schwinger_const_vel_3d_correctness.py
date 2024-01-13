@@ -73,4 +73,4 @@ if __name__ == "__main__":
     plt.colorbar()
     plt.show()
 
-    print("Relative error = ", np.linalg.norm(sol1 - sol_true) / np.linalg.norm(sol1))
+    print("Relative error = ", np.linalg.norm(sol1 - sol_true) / np.linalg.norm(sol_true))
