@@ -7,7 +7,7 @@ from ...Solver.ScatteringIntegralConstantVelStorageOptimized import TruncatedKer
 
 if __name__ == "__main__":
 
-    sigma = 0.1
+    sigma = 0.05
     n = 201
     d = 1.0 / (n - 1)
     precision = np.complex64
