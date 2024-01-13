@@ -100,9 +100,9 @@ if __name__ == "__main__":
         return sol_true
 
     sol_true = analytical()
-    sol_true = sol_true[:, int(n / 2):, int(n / 2)]
+    sol_true_crop = sol_true[:, int(n / 2):, int(n / 2)]
 
-    plt.imshow(np.real(sol_true), cmap="Greys", vmin=-scale, vmax=scale)
+    plt.imshow(np.real(sol_true_crop), cmap="Greys", vmin=-scale, vmax=scale)
     plt.show()
 
     def lippmann_schwinger():
@@ -119,9 +119,9 @@ if __name__ == "__main__":
 
     sol1 = lippmann_schwinger()
     sol1[int(n / 2), int(n / 2), int(n / 2)] = 1.0  # Singular point
-    sol1 = sol1[:, int(n / 2):, int(n/2)]
+    sol1_crop = sol1[:, int(n / 2):, int(n/2)]
 
-    plt.imshow(np.real(sol1), cmap="Greys", vmin=-scale, vmax=scale)
+    plt.imshow(np.real(sol1_crop), cmap="Greys", vmin=-scale, vmax=scale)
     plt.show()
 
     print("Relative error = ", np.linalg.norm(sol1 - sol_true) / np.linalg.norm(sol1))
