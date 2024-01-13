@@ -45,7 +45,7 @@ if __name__ == "__main__":
         return sol_true
 
     sol_true = analytical()
-    scale = 1.0
+    scale = 1e-3
     plt.imshow(np.real(sol_true[:, :, int(n / 2)]), cmap="Greys", vmin=-scale, vmax=scale)
     plt.colorbar()
     plt.show()
@@ -69,6 +69,7 @@ if __name__ == "__main__":
         return sol1
 
     sol1 = lippmann_schwinger()
+    sol1[int(n / 2), int(n / 2), int(n / 2)] = 1.0  # Singular point
     plt.imshow(np.real(sol1[:, :, int(n/2)]), cmap="Greys", vmin=-scale, vmax=scale)
     plt.colorbar()
     plt.show()

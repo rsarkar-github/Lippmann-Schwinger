@@ -118,6 +118,7 @@ if __name__ == "__main__":
         return sol
 
     sol1 = lippmann_schwinger()
+    sol1[int(n / 2), int(n / 2), int(n / 2)] = 1.0  # Singular point
     sol1 = sol1[:, int(n / 2):, int(n/2)]
 
     plt.imshow(np.real(sol1), cmap="Greys", vmin=-scale, vmax=scale)
