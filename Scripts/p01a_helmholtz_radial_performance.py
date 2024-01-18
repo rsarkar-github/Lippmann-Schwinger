@@ -1,7 +1,7 @@
 import sys
 import numpy as np
 from scipy import interpolate
-from scipy.sparse.linalg import LinearOperator, gmres, lsqr
+from scipy.sparse.linalg import gmres
 from matplotlib import pyplot as plt
 from ..Solver.HelmholtzOperators import create_helmholtz2d_matrix_radial
 from ..Utilities import TypeChecker
@@ -154,7 +154,7 @@ if __name__ == "__main__":
     for i, item in enumerate(fac):
 
         print("\n\n---------------------------------------------------------")
-        
+
         a1_full, a2_full, pad1, pad2, vel_array, src = create_objects_for_experiment(factor=item)
 
         mat = create_helmholtz2d_matrix_radial(
@@ -170,48 +170,32 @@ if __name__ == "__main__":
             warnings=True
         )
 
-        mat_t = create_helmholtz2d_matrix_radial(
-            a1=a1_full,
-            a2=a2_full,
-            pad1=pad1,
-            pad2=pad2,
-            omega=omega,
-            precision=precision,
-            vel=vel_array,
-            pml_damping=100.0,
-            adj=True,
-            warnings=True
-        )
-
         n1, n2 = vel_array.shape
         print("n1 = ", n1, "n2 = ", n2)
 
-        def forward_op(v):
-            return mat.dot(v)
-        def adjoint_op(v):
-            return mat_t.dot(v)
+        def make_callback():
+            closure_variables = dict(counter=0, residuals=[])
 
-        linop = LinearOperator(
-            shape=(n1 * n2, n1 * n2),
-            matvec=forward_op,
-            rmatvec=adjoint_op,
-            dtype=precision
-        )
+            def callback(residuals):
+                closure_variables["counter"] += 1
+                closure_variables["residuals"].append(residuals)
+                print(closure_variables["counter"], residuals)
 
+            return callback
+
+        # GMRES
         tol = 1e-6
-
-        sol, istop, itn, r1norm = lsqr(
-            linop,
+        sol, exitcode = gmres(
+            mat,
             np.reshape(src, newshape=(n1 * n2, 1)),
-            atol=0,
-            btol=tol,
-            show=True
-        )[:4]
+            maxiter=20000,
+            restart=200,
+            callback=make_callback()
+        )
+        print("\nExitcode ", exitcode)
         sol = np.reshape(sol, newshape=(n1, n2))
-        print(itn, r1norm)
 
-        scale = 1e-4
+        scale = 1e-5
         fig, ax = plt.subplots(1, 1)
         im = ax.imshow(np.real(sol), cmap="Greys", vmin=-scale, vmax=scale)
         plt.show()
-
