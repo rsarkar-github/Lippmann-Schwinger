@@ -3,8 +3,9 @@ import time
 from scipy.sparse.linalg import splu
 from scipy import special
 from matplotlib import pyplot as plt
-from ...Solver.HelmholtzOperators import create_helmholtz2d_matrix_radial
+from ...Solver.HelmholtzOperators import create_helmholtz2d_matrix_radial_full
 from ...Solver.ScatteringIntegralConstantVelStorageOptimized import TruncatedKernelConstantVel3d
+
 
 
 if __name__ == "__main__":
@@ -34,13 +35,13 @@ if __name__ == "__main__":
 
         pml_cells = 10
         n1 = n + 2 * pml_cells
-        n2 = int(n / 2) + 1 + pml_cells
+        n2 = n + 2 * pml_cells
         vel = np.zeros(shape=(n1, n2), dtype=np.float32) + v0
         omega = 2 * np.pi * f
         a1 = d * (n1 - 1)
         a2 = d * (n2 - 1)
 
-        mat = create_helmholtz2d_matrix_radial(
+        mat = create_helmholtz2d_matrix_radial_full(
             a1=a1,
             a2=a2,
             pad1=pml_cells,
@@ -53,38 +54,22 @@ if __name__ == "__main__":
             warnings=True
         )
         u1 = np.zeros(shape=(n1, n2), dtype=precision)
-        u1[pml_cells:(n1 - pml_cells), 0:(n2 - pml_cells)] = u[:, int(n/2):, int(n/2)]
+        u1[pml_cells:(n1 - pml_cells), pml_cells:(n2 - pml_cells)] = u[:, :, int(n/2)]
 
         plt.imshow(np.real(u1), cmap="Greys")
         plt.show()
 
         mat_lu = splu(mat)
         sol = mat_lu.solve(np.reshape(u1, newshape=(n1 * n2, 1)))
-        sol2 = np.reshape(sol, newshape=(n1, n2))[pml_cells:(n1 - pml_cells), 0:(n2 - pml_cells)]
+        sol2 = np.reshape(sol, newshape=(n1, n2))[pml_cells:(n1 - pml_cells), pml_cells:(n2 - pml_cells)]
 
         return sol2
 
     sol = helmholtz()
+
+    print("Evenness check norm = ", np.linalg.norm(sol - sol[:, ::-1]))
+
+    sol = sol[:, int(n/2):]
     scale = 1e-2
     plt.imshow(np.real(sol), cmap="Greys", vmin=-scale, vmax=scale)
     plt.show()
-
-    def lippmann_schwinger():
-
-        op = TruncatedKernelConstantVel3d(n=n, k=k, precision=precision)
-        sol = u * 0
-
-        start_t = time.time()
-        op.convolve_kernel(u=u, output=sol)
-        end_t = time.time()
-        print("Total time to execute convolution: ", "{:4.2f}".format(end_t - start_t), " s \n")
-
-        return sol
-
-    sol1 = lippmann_schwinger()
-    sol1_crop = sol1[:, int(n / 2):, int(n/2)]
-
-    plt.imshow(np.real(sol1_crop), cmap="Greys", vmin=-scale, vmax=scale)
-    plt.show()
-
-    print("Relative error = ", np.linalg.norm(sol1_crop - sol) / np.linalg.norm(sol1_crop))
