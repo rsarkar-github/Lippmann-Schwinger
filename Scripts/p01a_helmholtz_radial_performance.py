@@ -190,7 +190,7 @@ if __name__ == "__main__":
         sol, exitcode = gmres(
             mat,
             np.reshape(src, newshape=(n1 * n2, 1)),
-            maxiter=20000,
+            maxiter=50000,
             restart=200,
             callback=make_callback()
         )
