@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 from ...Solver.HelmholtzOperators import create_helmholtz2d_matrix_radial
 from ...Utilities import TypeChecker
 
-# TODO: problems detected with Helmholtz radial solvers
+
 def make_velocity_from_trace(vel_trace_, n1_, n2_):
     """
     :param vel_trace_: velocity values as a 2D numpy array of shape [N, 1], assumed dtype = np.float32

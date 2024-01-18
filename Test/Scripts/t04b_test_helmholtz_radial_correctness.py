@@ -10,7 +10,7 @@ from ...Solver.ScatteringIntegralConstantVelStorageOptimized import TruncatedKer
 if __name__ == "__main__":
 
     # Lippmann-Schwinger solver
-    n = 201
+    n = 401
     d = 1.0 / (n - 1)
     precision = np.complex64
     f = 10.0
