@@ -1,11 +1,11 @@
+import sys
 import numpy as np
 from scipy import interpolate
 from scipy.sparse.linalg import LinearOperator, gmres, lsqr
-from scipy.sparse.linalg import splu
 from matplotlib import pyplot as plt
 from ..Solver.HelmholtzOperators import create_helmholtz2d_matrix_radial
 from ..Utilities import TypeChecker
-# TODO: Incorrect
+
 
 def make_velocity_from_trace(vel_trace_, n1_, n2_):
     """
@@ -82,6 +82,12 @@ def extend_vel_trace_1d(vel_trace_, pad_cells_):
 
 if __name__ == "__main__":
 
+    # Check arguments
+    if len(sys.argv) < 2:
+        raise ValueError("Program missing command line arguments.")
+
+    freq = float(sys.argv[1])
+
     # Load Marmousi velocity trace
     with np.load("Lippmann-Schwinger/Data/marmousi-vp-vz.npz") as data:
         vel_trace = data["arr_0"]
@@ -90,7 +96,6 @@ if __name__ == "__main__":
     vel_trace = np.reshape(vel_trace, newshape=(n1_vel_trace, 1))
 
     # Define frequency, calculate min & max wavelength
-    freq = 7.5
     omega = freq * 2 * np.pi
     precision = np.complex128
 
@@ -100,12 +105,12 @@ if __name__ == "__main__":
     lambda_max = vmax / freq
 
     # Set grid extent, & calculate minimum grid spacing
-    delta_base = 0.02
+    delta_base = 0.015
     a1 = n1_vel_trace * delta_base  # in km (should not change)
-    a2 = 200 * delta_base           # in km (should not change)
+    a2 = 400 * delta_base           # in km (should not change)
 
     # Grid refining to do (different experiments)
-    fac = [1]
+    fac = [1, 2, 4]
 
     # Function for creating all objects for the experiment
     def create_objects_for_experiment(factor):
@@ -136,7 +141,7 @@ if __name__ == "__main__":
         vel_trace_mod = extend_vel_trace_1d(vel_trace_=vel_trace_mod, pad_cells_=pad1_cells)
         vel = make_velocity_from_trace(vel_trace_=vel_trace_mod, n1_=n1_, n2_=n2_)
 
-        # Create source centered at original grid (x2 = 0, x1 = a1 / 2, gaussian std = delta)
+        # Create source centered at original grid (x2 = 0, x1 = a1 / 10, gaussian std = delta)
         x1 = np.linspace(start=0, stop=a1_pad, num=n1_, endpoint=True)
         x2 = np.linspace(start=0, stop=a2_pad, num=n2_, endpoint=True)
         x1v, x2v = np.meshgrid(x1, x2)
@@ -148,6 +153,8 @@ if __name__ == "__main__":
 
     for i, item in enumerate(fac):
 
+        print("\n\n---------------------------------------------------------")
+        
         a1_full, a2_full, pad1, pad2, vel_array, src = create_objects_for_experiment(factor=item)
 
         mat = create_helmholtz2d_matrix_radial(
