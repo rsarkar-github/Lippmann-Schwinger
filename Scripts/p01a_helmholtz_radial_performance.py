@@ -1,5 +1,6 @@
 import sys
 import numpy as np
+import time
 from scipy import interpolate
 from scipy.sparse.linalg import gmres
 from matplotlib import pyplot as plt
@@ -185,6 +186,7 @@ if __name__ == "__main__":
 
         # GMRES
         tol = 1e-6
+        t_start = time.time()
         sol, exitcode = gmres(
             mat,
             np.reshape(src, newshape=(n1 * n2, 1)),
@@ -193,6 +195,8 @@ if __name__ == "__main__":
             callback=make_callback()
         )
         print("\nExitcode ", exitcode)
+        t_end = time.time()
+        print("Time to solve GMRES (restart = 200) is ", "{:4.2f}".format(t_end - t_start), "s")
         sol = np.reshape(sol, newshape=(n1, n2))
 
         scale = 1e-5
