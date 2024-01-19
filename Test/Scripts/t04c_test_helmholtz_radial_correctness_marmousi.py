@@ -130,6 +130,8 @@ if __name__ == "__main__":
 
         tol = 1e-3
         # GMRES
+        print("------------------------------------------------------------")
+        print("Starting GMRES...")
         sol, exitcode = gmres(
             mat_3d,
             np.reshape(u1, newshape=(n1 * n2 * n3, 1)),
