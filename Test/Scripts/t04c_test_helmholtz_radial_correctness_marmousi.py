@@ -125,15 +125,14 @@ if __name__ == "__main__":
             warnings=False
         )
         print("Matrix created")
-        exit(0)
 
         u1 = np.zeros(shape=(n1, n2, n3), dtype=precision)
         u1[pml_cells:pml_cells + n, pml_cells:pml_cells + n, pml_cells:pml_cells + n] += u
 
-        tol = 1e-3
         # GMRES
         print("------------------------------------------------------------")
         print("Starting GMRES...")
+        tol = 1e-3
         sol, exitcode = gmres(
             mat_3d,
             np.reshape(u1, newshape=(n1 * n2 * n3, 1)),
