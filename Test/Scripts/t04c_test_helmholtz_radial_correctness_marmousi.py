@@ -135,7 +135,8 @@ if __name__ == "__main__":
             np.reshape(u1, newshape=(n1 * n2 * n3, 1)),
             maxiter=10000,
             restart=20,
-            callback=make_callback()
+            callback=make_callback(),
+            tol=tol
         )
         print("\nExitcode ", exitcode)
 

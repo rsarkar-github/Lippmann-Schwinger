@@ -6,79 +6,8 @@ from scipy.sparse.linalg import gmres
 from matplotlib import pyplot as plt
 from ..Solver.HelmholtzOperators import create_helmholtz2d_matrix_radial
 from ..Utilities import TypeChecker
+from ..Utilities.Utils import make_velocity_from_trace, make_velocity3d_from_trace, extend_vel_trace_1d
 
-
-def make_velocity_from_trace(vel_trace_, n1_, n2_):
-    """
-    :param vel_trace_: velocity values as a 2D numpy array of shape [N, 1], assumed dtype = np.float32
-    :param n1_: points along x1 direction
-    :param n2_: points along x2 direction
-
-    The trace is first interpolated to a grid with n1 points in x1 direction (same vertical extent).
-    Then it is copied n2 times in x2 direction.
-    Result is returned as a numpy array or shape (n1_, n2_).
-    """
-
-    n1_in_, _ = vel_trace_.shape
-
-    x1_start_ = 0.0
-    x1_end_ = n1_in_
-
-    coord_in_ = np.linspace(start=x1_start_, stop=x1_end_, num=n1_in_, endpoint=True)
-    val_in_ = np.reshape(vel_trace_, newshape=(n1_in_,))
-
-    f = interpolate.interp1d(coord_in_, val_in_, kind="linear")
-
-    coord_out_ = np.linspace(start=x1_start_, stop=x1_end_, num=n1_, endpoint=True)
-    val_out_ = np.reshape(f(coord_out_), newshape=(n1_, 1))
-
-    vel_ = np.zeros(shape=(n1_, n2_), dtype=np.float32)
-
-    for ii in range(n1_):
-        vel_[ii, :] = val_out_[ii, 0]
-
-    return vel_
-
-
-def make_grid_params(a1_, a2_, delta_, lambda_min_, lambda_max_):
-    """
-    :param a1_: original domain is [0, a1_] x [0, a2_]
-    :param a2_: original domain is [0, a1_] x [0, a2_]
-    :param delta_: grid spacing along both directions
-    :param lambda_min_: minimum wavelength to support
-    :param lambda_max_: maximum wavelength to support
-
-    :return: (a1_pad_, a2_pad_, pad1_cells_, pad2_cells_)
-
-    Output new grid by adding needed pml cells, for the even Helmholtz solver test.
-    """
-
-    TypeChecker.check_float_positive(delta_)
-    TypeChecker.check_float_upper_bound(x=delta_, ub=lambda_min_ / 10.0)
-
-    pad_cells_ = int(lambda_max_ / delta_) + 1
-
-    a1_pad_ = a1_ + 2 * pad_cells_ * delta_
-    a2_pad_ = a2_ + pad_cells_ * delta_
-
-    return a1_pad_, a2_pad_, pad_cells_, pad_cells_
-
-
-def extend_vel_trace_1d(vel_trace_, pad_cells_):
-    """
-    :param vel_trace_: velocity values as a 2D numpy array of shape [N, 1], assumed dtype = np.float32
-    :param pad_cells_: number of cells to pad along each end
-    """
-
-    n1_in_, _ = vel_trace_.shape
-    n1_out_ = n1_in_ + 2 * pad_cells_
-
-    vel_trace_out_ = np.zeros(shape=(n1_out_, 1), dtype=np.float32)
-    vel_trace_out_[pad_cells_: pad_cells_ + n1_in_, 0] = vel_trace_.flatten()
-    vel_trace_out_[0: pad_cells_, 0] = vel_trace_out_[pad_cells_, 0]
-    vel_trace_out_[pad_cells_ + n1_in_: n1_out_, 0] = vel_trace_out_[pad_cells_ + n1_in_ - 1, 0]
-
-    return vel_trace_out_
 
 
 if __name__ == "__main__":
