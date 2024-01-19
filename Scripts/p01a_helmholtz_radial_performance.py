@@ -185,14 +185,15 @@ if __name__ == "__main__":
             return callback
 
         # GMRES
-        tol = 1e-6
+        tol = 1e-5
         t_start = time.time()
         sol, exitcode = gmres(
             mat,
             np.reshape(src, newshape=(n1 * n2, 1)),
             maxiter=50000,
             restart=200,
-            callback=make_callback()
+            callback=make_callback(),
+            tol=tol
         )
         print("\nExitcode ", exitcode)
         t_end = time.time()

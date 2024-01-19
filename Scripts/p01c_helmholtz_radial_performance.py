@@ -1,11 +1,9 @@
 import sys
 import numpy as np
 import time
-from scipy import interpolate
 from scipy.sparse.linalg import gmres
 from matplotlib import pyplot as plt
 from ..Solver.HelmholtzOperators import create_helmholtz2d_matrix_radial
-from ..Utilities import TypeChecker
 from ..Utilities.Utils import make_velocity_from_trace, make_velocity3d_from_trace, extend_vel_trace_1d
 
 

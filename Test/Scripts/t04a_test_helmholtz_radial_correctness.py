@@ -1,7 +1,6 @@
 import numpy as np
 import time
 from scipy.sparse.linalg import splu
-from scipy import special
 from matplotlib import pyplot as plt
 from ...Solver.HelmholtzOperators import create_helmholtz2d_matrix_radial
 from ...Solver.ScatteringIntegralConstantVelStorageOptimized import TruncatedKernelConstantVel3d
