@@ -59,7 +59,7 @@ if __name__ == "__main__":
     cbar = plt.colorbar(aspect=10, pad=0.02)
     cbar.set_label('Vp [km/s]', labelpad=10)
     plt.title('Marmousi-2 v(z) model')
-    plt.xlabel('x [m]')
+    plt.xlabel('x$_1$ [m]')
     plt.ylabel('z [m]')
 
     savefig_fname = "Lippmann-Schwinger/Fig/marmousi-vp-vz-2d.pdf"
