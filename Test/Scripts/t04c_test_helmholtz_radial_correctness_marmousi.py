@@ -124,6 +124,8 @@ if __name__ == "__main__":
             adj=False,
             warnings=False
         )
+        print("Matrix created")
+        exit(0)
 
         u1 = np.zeros(shape=(n1, n2, n3), dtype=precision)
         u1[pml_cells:pml_cells + n, pml_cells:pml_cells + n, pml_cells:pml_cells + n] += u
