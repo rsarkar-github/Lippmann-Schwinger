@@ -1,7 +1,7 @@
 from scipy.sparse import csc_matrix
 import numpy as np
+from tqdm import tqdm
 from ..Utilities import TypeChecker
-import matplotlib.pyplot as plt
 
 
 def create_helmholtz2d_matrix(
@@ -604,7 +604,7 @@ def create_helmholtz3d_matrix(
     # Loop over interior nodes except faces
     def interior_nodes():
 
-        for i1 in range(2, n1):
+        for i1 in tqdm(range(2, n1)):
             count1 = (i1 - 1) * n2 * n3
             p1z = s1[2 * i1] / d1
             p2z = s1[2 * i1 + 1] / d1
