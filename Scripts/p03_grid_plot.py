@@ -42,7 +42,7 @@ if __name__ == "__main__":
         plt.plot(-0.5 + np.array(x1) / fac, np.array(z1) / fac, 'k.-', markersize=1.0, linewidth=0.2)
 
     # Draw red dots
-    for i in range(5, n2_minor, 10):
+    for i in range(0, n2_minor, 10):
         dz = 1.0
         x1 = [50.0]
         z1 = [i * dz]
