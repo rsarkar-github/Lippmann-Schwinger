@@ -106,7 +106,7 @@ if __name__ == "__main__":
     plt.ylabel(r'$z$ [m]')
 
     np.savez("Lippmann-Schwinger/Data/marmousi_new_vz_2d.npz", vp_mean_2d)
-    savefig_fname = "Lippmann-Schwinger/Fig/marmousi_new_vz_2d.pdf"
+    savefig_fname = "Lippmann-Schwinger/Fig/p04b_marmousi_new_vz_2d.pdf"
     plt.savefig(savefig_fname, format="pdf", bbox_inches="tight", pad_inches=0.01)
     plt.show()
 
@@ -132,6 +132,6 @@ if __name__ == "__main__":
     plt.ylabel(r'$z$ [m]')
 
     np.savez("Lippmann-Schwinger/Data/marmousi_new_2d.npz", vp_total)
-    savefig_fname = "Lippmann-Schwinger/Fig/marmousi_new_2d.pdf"
+    savefig_fname = "Lippmann-Schwinger/Fig/p04b_marmousi_new_2d.pdf"
     plt.savefig(savefig_fname, format="pdf", bbox_inches="tight", pad_inches=0.01)
     plt.show()
