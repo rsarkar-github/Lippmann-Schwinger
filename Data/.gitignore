@@ -1,6 +1,13 @@
 *
 !.gitignore
 !sigsbee.npz
+!sigsbee_new.npz
+!sigsbee_new_2d.npz
+!sigsbee_new_vz_2d.npz
 !marmousi-vp.npz
 !marmousi-vp-vz.npz
 !marmousi-vp-vz-2d.npz
+!marmousi_new_2d.npz
+!marmousi_new_vz_2d.npz
+!seiscope_new_2d.npz
+!seiscope_new_vz_2d.npz
