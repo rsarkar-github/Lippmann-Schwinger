@@ -146,7 +146,7 @@ def func_helper2D_no_mpi(
     :param num_slice: (int)
         depth slice number
     :param green_func_truncated_ft: (str)
-        Numpy ndarray containing the truncated the Green's function
+        Numpy ndarray containing the truncated Green's function
     :param verbose: (bool)
         verbose flag
     """
@@ -1732,8 +1732,8 @@ if __name__ == "__main__":
     # ----------------------------------------------
     # 2d Test
 
-    n_ = 101
-    nz_ = 101
+    n_ = 501
+    nz_ = 301
     a_ = 0.
     b_ = a_ + (1.0 / (n_ - 1)) * (nz_ - 1)
     freq_ = 10.0
