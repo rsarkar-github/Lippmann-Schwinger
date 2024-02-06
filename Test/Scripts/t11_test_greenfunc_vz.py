@@ -15,7 +15,7 @@ if __name__ == "__main__":
     b_ = a_ + (1.0 / (n_ - 1)) * (nz_ - 1)
     freq_ = 5.0
     omega_ = 2 * np.pi * freq_
-    m_ = 5
+    m_ = 4
     sigma_ = 0.004
     precision_ = np.complex64
     green_func_dir_ = "Lippmann-Schwinger/Test/Data/t11/"
