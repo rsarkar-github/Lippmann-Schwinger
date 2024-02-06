@@ -40,7 +40,7 @@ if __name__ == "__main__":
     dz = 15
     dx = 15
     nz_new = 301
-    nx_new = 501
+    nx_new = 401
     zmax = (nz_new - 1) * dz
     xmax = (nx_new - 1) * dx
     extent = [0, xmax, zmax, 0]

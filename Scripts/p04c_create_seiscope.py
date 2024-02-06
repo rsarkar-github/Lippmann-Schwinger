@@ -10,7 +10,7 @@ if __name__ == "__main__":
     dz = 15
     dx = 15
     nz_new = 301
-    nx_new = 501
+    nx_new = 401
     zmax = (nz_new - 1) * dz
     xmax = (nx_new - 1) * dx
     extent = [0, xmax, zmax, 0]
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     vp_diff = vp * 0.0
     for i in range(100, nz_new):
         for j in range(nx_new):
-            if (((i - 100) ** 2 + (j - 250) ** 2) ** 0.5) < 100:
+            if (((i - 100) ** 2 + (j - 200) ** 2) ** 0.5) < 80:
                 vp_diff[i, j] = -4.0 + 2.8
 
     vp_total = vp_diff + vp

@@ -33,7 +33,7 @@ if __name__ == "__main__":
     # ----------------------
     # Perform cropping
     # ----------------------
-    vp_new = vp[66:1067:2, 0:581:2]
+    vp_new = vp[166:1067:2, 0:581:2]
     vp_new = vp_new.T
 
     # ---------------------------------------------------
@@ -42,7 +42,7 @@ if __name__ == "__main__":
     dz = 15
     dx = 15
     nz_new = 301
-    nx_new = 501
+    nx_new = 401
     zmax = (nz_new - 1) * dz
     xmax = (nx_new - 1) * dx
     extent = [0, xmax, zmax, 0]
