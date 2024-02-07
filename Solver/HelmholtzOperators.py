@@ -1829,6 +1829,8 @@ def create_helmholtz2d_matrix_even(
     n2_ = n2 + 1
     a1_ = a1 + 2 * d1
     a2_ = a2 + d2
+    if warnings:
+        print("Helmholtz system dimension: n1= ", n1_, ", n2= ", n2_)
 
     # Calculate s1 and s2 arrays
     def s1_array():

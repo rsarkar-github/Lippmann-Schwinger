@@ -413,7 +413,7 @@ class TruncatedKernelGeneralVz3D:
             self._verbose = verbose
 
             self._cutoff1 = np.sqrt(2.0)
-            self._cutoff2 = 1.7
+            self._cutoff2 = 1.5
 
             # Run class initializer
             self.__initialize_class()
@@ -1097,7 +1097,7 @@ class TruncatedKernelGeneralVz2d:
             self._verbose = verbose
 
             self._cutoff1 = 1.0
-            self._cutoff2 = 1.2
+            self._cutoff2 = 1.1
 
             # Run class initializer
             self.__initialize_class()
