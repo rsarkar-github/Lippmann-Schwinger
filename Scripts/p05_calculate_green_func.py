@@ -1,7 +1,5 @@
 import sys
-import time
 import numpy as np
-import matplotlib.pyplot as plt
 from ..Solver.ScatteringIntegralGeneralVz import TruncatedKernelGeneralVz2d
 
 
@@ -31,8 +29,10 @@ if __name__ == "__main__":
         freq = 7.5
     elif freq_mode == 2:
         freq = 10.0
+    elif freq_mode == 3:
+        freq = 15.0
     else:
-        print("freq mode = ", freq_mode, " is not supported. Must be 0, 1, or 2.")
+        print("freq mode = ", freq_mode, " is not supported. Must be 0, 1, 2, or 3.")
 
     # ----------------------------------------------
     # Load vz

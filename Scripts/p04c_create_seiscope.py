@@ -13,7 +13,7 @@ if __name__ == "__main__":
     nx_new = 351
     zmax = (nz_new - 1) * dz
     xmax = (nx_new - 1) * dx
-    extent = [0, xmax, zmax, 0]
+    extent = [0, xmax / 1000.0, zmax / 1000.0, 0]
 
     print("Creating Seiscope model...")
     vp = np.zeros(shape=(nz_new, nx_new), dtype=np.float32) + 3.5
@@ -23,8 +23,8 @@ if __name__ == "__main__":
     image = plt.imshow(vp, cmap="jet", interpolation='nearest', extent=extent, vmin=1.5, vmax=4.5)
     cbar = plt.colorbar(aspect=10, pad=0.02)
     cbar.set_label('Vp [km/s]', labelpad=10)
-    plt.xlabel(r'$x_1$ [m]')
-    plt.ylabel(r'$z$ [m]')
+    plt.xlabel(r'$x_1$ [km]')
+    plt.ylabel(r'$z$ [km]')
 
     np.savez("Lippmann-Schwinger/Data/p04c-seiscope-new-vz-2d.npz", vp)
     savefig_fname = "Lippmann-Schwinger/Fig/p04c-seiscope-new-vz-2d.pdf"
@@ -46,8 +46,8 @@ if __name__ == "__main__":
     image = plt.imshow(vp_total, cmap="jet", interpolation='nearest', extent=extent, vmin=1.5, vmax=4.5)
     cbar = plt.colorbar(aspect=10, pad=0.02)
     cbar.set_label('Vp [km/s]', labelpad=10)
-    plt.xlabel(r'$x_1$ [m]')
-    plt.ylabel(r'$z$ [m]')
+    plt.xlabel(r'$x_1$ [km]')
+    plt.ylabel(r'$z$ [km]')
 
     np.savez("Lippmann-Schwinger/Data/p04c-seiscope-new-2d.npz", vp_total)
     savefig_fname = "Lippmann-Schwinger/Fig/p04c-seiscope-new-2d.pdf"
