@@ -12,7 +12,7 @@ def estimate_vz(vel_slice_, cutoff):
 
     cnt = 0
     for ii in range(n):
-        if v[ii] >= cutoff:
+        if v[ii] > cutoff:
             v[ii] = 0.
             cnt += 1
 
@@ -39,8 +39,8 @@ if __name__ == "__main__":
     # ---------------------------------------------------
     dz = 15
     dx = 15
-    nz_new = 301
-    nx_new = 401
+    nz_new = 251
+    nx_new = 351
     zmax = (nz_new - 1) * dz
     xmax = (nx_new - 1) * dx
     extent = [0, xmax, zmax, 0]
@@ -91,7 +91,8 @@ if __name__ == "__main__":
 
     vp_mean = np.zeros(shape=(nz_new,), dtype=np.float32)
     for i in range(nz_new):
-        vp_mean[i] = estimate_vz(vel_slice_=vp_interp[i, :], cutoff=4.0)
+        vp_interp1 = np.clip(vp_interp, a_min=None, a_max=3.5)
+        vp_mean[i] = estimate_vz(vel_slice_=vp_interp1[i, :], cutoff=3.5)
 
     vp_mean_2d = vp_interp * 1.0
     for i in range(nx_new):
@@ -105,8 +106,8 @@ if __name__ == "__main__":
     plt.xlabel(r'$x_1$ [m]')
     plt.ylabel(r'$z$ [m]')
 
-    np.savez("Lippmann-Schwinger/Data/marmousi_new_vz_2d.npz", vp_mean_2d)
-    savefig_fname = "Lippmann-Schwinger/Fig/p04b_marmousi_new_vz_2d.pdf"
+    np.savez("Lippmann-Schwinger/Data/p04b-marmousi-new-vz-2d.npz", vp_mean_2d)
+    savefig_fname = "Lippmann-Schwinger/Fig/p04b-marmousi-new-vz-2d.pdf"
     plt.savefig(savefig_fname, format="pdf", bbox_inches="tight", pad_inches=0.01)
     plt.show()
 
@@ -131,7 +132,7 @@ if __name__ == "__main__":
     plt.xlabel(r'$x_1$ [m]')
     plt.ylabel(r'$z$ [m]')
 
-    np.savez("Lippmann-Schwinger/Data/marmousi_new_2d.npz", vp_total)
-    savefig_fname = "Lippmann-Schwinger/Fig/p04b_marmousi_new_2d.pdf"
+    np.savez("Lippmann-Schwinger/Data/p04b-marmousi-new-2d.npz", vp_total)
+    savefig_fname = "Lippmann-Schwinger/Fig/p04b-marmousi-new-2d.pdf"
     plt.savefig(savefig_fname, format="pdf", bbox_inches="tight", pad_inches=0.01)
     plt.show()

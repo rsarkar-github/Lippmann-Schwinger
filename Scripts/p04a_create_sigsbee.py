@@ -41,8 +41,8 @@ if __name__ == "__main__":
     # ---------------------------------------------------
     dz = 15
     dx = 15
-    nz_new = 301
-    nx_new = 401
+    nz_new = 251
+    nx_new = 351
     zmax = (nz_new - 1) * dz
     xmax = (nx_new - 1) * dx
     extent = [0, xmax, zmax, 0]
@@ -87,7 +87,8 @@ if __name__ == "__main__":
     plt.ylabel('z [m]')
     plt.show()
 
-    np.savez("Lippmann-Schwinger/Data/sigsbee_new.npz", vp_interp)
+    # Turn this on to save intermediate Sigsbee model
+    # np.savez("Lippmann-Schwinger/Data/sigsbee-new.npz", vp_interp)
 
     # --------------------------------------------------------
     # Estimating v(z)
@@ -95,7 +96,7 @@ if __name__ == "__main__":
 
     vp_mean = np.zeros(shape=(nz_new,), dtype=np.float32)
     for i in range(nz_new):
-        vp_mean[i] = estimate_vz(vel_slice_=vp_interp[i, :], cutoff=4.0)
+        vp_mean[i] = estimate_vz(vel_slice_=vp_interp[i, :], cutoff=3.4)
 
     vp_mean_2d = vp_interp * 1.0
     for i in range(nx_new):
@@ -109,8 +110,8 @@ if __name__ == "__main__":
     plt.xlabel(r'$x_1$ [m]')
     plt.ylabel(r'$z$ [m]')
 
-    np.savez("Lippmann-Schwinger/Data/sigsbee_new_vz_2d.npz", vp_mean_2d)
-    savefig_fname = "Lippmann-Schwinger/Fig/p04a_sigsbee_new_vz_2d.pdf"
+    np.savez("Lippmann-Schwinger/Data/p04a-sigsbee-new-vz-2d.npz", vp_mean_2d)
+    savefig_fname = "Lippmann-Schwinger/Fig/p04a-sigsbee-new-vz-2d.pdf"
     plt.savefig(savefig_fname, format="pdf", bbox_inches="tight", pad_inches=0.01)
     plt.show()
 
@@ -135,7 +136,7 @@ if __name__ == "__main__":
     plt.xlabel(r'$x_1$ [m]')
     plt.ylabel(r'$z$ [m]')
 
-    np.savez("Lippmann-Schwinger/Data/sigsbee_new_2d.npz", vp_total)
-    savefig_fname = "Lippmann-Schwinger/Fig/p04a_sigsbee_new_2d.pdf"
+    np.savez("Lippmann-Schwinger/Data/p04a-sigsbee-new-2d.npz", vp_total)
+    savefig_fname = "Lippmann-Schwinger/Fig/p04a-sigsbee-new-2d.pdf"
     plt.savefig(savefig_fname, format="pdf", bbox_inches="tight", pad_inches=0.01)
     plt.show()

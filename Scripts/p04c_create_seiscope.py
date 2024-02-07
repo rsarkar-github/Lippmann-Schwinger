@@ -9,15 +9,15 @@ if __name__ == "__main__":
     # ----------------------
     dz = 15
     dx = 15
-    nz_new = 301
-    nx_new = 401
+    nz_new = 251
+    nx_new = 351
     zmax = (nz_new - 1) * dz
     xmax = (nx_new - 1) * dx
     extent = [0, xmax, zmax, 0]
 
     print("Creating Seiscope model...")
-    vp = np.zeros(shape=(nz_new, nx_new), dtype=np.float32) + 4.0
-    vp[:100, :] = 2.8
+    vp = np.zeros(shape=(nz_new, nx_new), dtype=np.float32) + 3.5
+    vp[:100, :] = 2.2
 
     fig = plt.figure(figsize=(12, 3))  # define figure size
     image = plt.imshow(vp, cmap="jet", interpolation='nearest', extent=extent, vmin=1.5, vmax=4.5)
@@ -26,8 +26,8 @@ if __name__ == "__main__":
     plt.xlabel(r'$x_1$ [m]')
     plt.ylabel(r'$z$ [m]')
 
-    np.savez("Lippmann-Schwinger/Data/seiscope_new_vz_2d.npz", vp)
-    savefig_fname = "Lippmann-Schwinger/Fig/p04c_seiscope_new_vz_2d.pdf"
+    np.savez("Lippmann-Schwinger/Data/p04c-seiscope-new-vz-2d.npz", vp)
+    savefig_fname = "Lippmann-Schwinger/Fig/p04c-seiscope-new-vz-2d.pdf"
     plt.savefig(savefig_fname, format="pdf", bbox_inches="tight", pad_inches=0.01)
     plt.show()
 
@@ -37,8 +37,8 @@ if __name__ == "__main__":
     vp_diff = vp * 0.0
     for i in range(100, nz_new):
         for j in range(nx_new):
-            if (((i - 100) ** 2 + (j - 200) ** 2) ** 0.5) < 80:
-                vp_diff[i, j] = -4.0 + 2.8
+            if (((i - 100) ** 2 + (j - 175) ** 2) ** 0.5) < 60:
+                vp_diff[i, j] = -3.5 + 2.2
 
     vp_total = vp_diff + vp
 
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     plt.xlabel(r'$x_1$ [m]')
     plt.ylabel(r'$z$ [m]')
 
-    np.savez("Lippmann-Schwinger/Data/seiscope_new_2d.npz", vp_total)
-    savefig_fname = "Lippmann-Schwinger/Fig/p04c_seiscope_new_2d.pdf"
+    np.savez("Lippmann-Schwinger/Data/p04c-seiscope-new-2d.npz", vp_total)
+    savefig_fname = "Lippmann-Schwinger/Fig/p04c-seiscope-new-2d.pdf"
     plt.savefig(savefig_fname, format="pdf", bbox_inches="tight", pad_inches=0.01)
     plt.show()
