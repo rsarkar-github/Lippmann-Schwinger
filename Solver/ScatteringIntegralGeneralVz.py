@@ -902,8 +902,9 @@ class TruncatedKernelGeneralVz3D:
             raise ValueError("Minimum grid spacing condition violated")
 
         if grid_min >= lambda_min / 10.0:
-            print("\nWarning: Recommended minimum grid spacing "
-                  "is 10 times smallest wave length.\n")
+            print("\nWarning: Recommended minimum grid spacing is 10 times smallest wave length.\n")
+            print("Recommended minimum grid spacing", lambda_min / 10.0)
+            print("Grid spacing detected", grid_min)
 
     def __read_green_func(self):
 
@@ -1639,8 +1640,9 @@ class TruncatedKernelGeneralVz2d:
             raise ValueError("Minimum grid spacing condition violated")
 
         if grid_min >= lambda_min / 10.0:
-            print("\nWarning: Recommended minimum grid spacing "
-                  "is 10 times smallest wave length.\n")
+            print("\nWarning: Recommended minimum grid spacing is 10 times smallest wave length.")
+            print("Recommended minimum grid spacing", lambda_min / 10.0)
+            print("Grid spacing detected", grid_min)
 
     def __read_green_func(self):
 

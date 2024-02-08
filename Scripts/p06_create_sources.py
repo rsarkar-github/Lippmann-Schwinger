@@ -85,7 +85,7 @@ if __name__ == "__main__":
 
         src = np.zeros(shape=(nz_, n_), dtype=np.float32)
         src[125:150, 25] = 1.0
-        src[25, 150:200] = 1.0
+        # src[25, 150:200] = 1.0
         src = gaussian_filter(src, sigma=1)
 
         return src

@@ -1,10 +1,11 @@
 import sys
 import numpy as np
 import time
+import json
 import matplotlib.pyplot as plt
 from scipy.sparse.linalg import LinearOperator, gmres, lsqr, lsmr
 from ..Solver.ScatteringIntegralGeneralVz import TruncatedKernelGeneralVz2d
-
+from ..Utilities.LinearSolvers import gmres_counter
 
 
 if __name__ == "__main__":
@@ -23,14 +24,17 @@ if __name__ == "__main__":
         filepath = "Lippmann-Schwinger/Data/p04a-sigsbee-new-vz-2d.npz"
         filepath1 = "Lippmann-Schwinger/Data/p04a-sigsbee-new-2d.npz"
         filepath2 = "Lippmann-Schwinger/Data/p06-sigsbee-source.npz"
+        filepath3_ = "Lippmann-Schwinger/Data/p07-sigsbee-"
     elif model_mode == 1:
         filepath = "Lippmann-Schwinger/Data/p04b-marmousi-new-vz-2d.npz"
         filepath1 = "Lippmann-Schwinger/Data/p04b-marmousi-new-2d.npz"
         filepath2 = "Lippmann-Schwinger/Data/p06-marmousi-source.npz"
+        filepath3_ = "Lippmann-Schwinger/Data/p07-marmousi-"
     elif model_mode == 2:
         filepath = "Lippmann-Schwinger/Data/p04c-seiscope-new-vz-2d.npz"
         filepath1 = "Lippmann-Schwinger/Data/p04c-seiscope-new-2d.npz"
         filepath2 = "Lippmann-Schwinger/Data/p06-seiscope-source.npz"
+        filepath3_ = "Lippmann-Schwinger/Data/p07-seiscope-"
     else:
         raise ValueError("model mode = ", model_mode, " is not supported. Must be 0, 1, or 2.")
 
@@ -135,9 +139,7 @@ if __name__ == "__main__":
     t2 = time.time()
     print("Operator application time = ", "{:6.2f}".format(t2 - t1), " s")
 
-    plt.imshow(np.real(rhs_), cmap="Greys")
-    plt.show()
-
+    np.savez(filepath3_ + "rhs-" + "{:4.2f}".format(freq) + ".npz", rhs_)
 
     # ----------------------------------------------
     # Initialize linear operator objects
@@ -164,19 +166,6 @@ if __name__ == "__main__":
     )
 
     # ----------------------------------------------
-    # Callback generator
-    # ----------------------------------------------
-    def make_callback():
-        closure_variables = dict(counter=0, residuals=[])
-
-        def callback(residuals):
-            closure_variables["counter"] += 1
-            closure_variables["residuals"].append(residuals)
-            print(closure_variables["counter"], residuals)
-
-        return callback
-
-    # ----------------------------------------------
     # Run solver iterations
     # ----------------------------------------------
 
@@ -186,6 +175,7 @@ if __name__ == "__main__":
         print("Solver: GMRES \n")
 
         tol_ = 1e-5
+        counter = gmres_counter()
 
         start_t = time.time()
         sol_, exitcode = gmres(
@@ -195,12 +185,16 @@ if __name__ == "__main__":
             restart=5000,
             atol=0,
             tol=tol_,
-            callback=make_callback()
+            callback=counter
         )
         sol_ = np.reshape(sol_, newshape=(nz_, n_))
-        print(exitcode)
         end_t = time.time()
+        print("Exitcode= ", exitcode)
+        print("Total iterations= ", counter.niter)
         print("Total time to solve: ", "{:4.2f}".format(end_t - start_t), " s \n")
+
+        total_iter = counter.niter
+        tsolve = end_t - start_t
 
     if solver_name == "lsqr":
 
@@ -215,12 +209,16 @@ if __name__ == "__main__":
             np.reshape(rhs_, newshape=(nz_ * n_, 1)),
             atol=0,
             btol=tol_,
-            show=True
+            show=True,
+            iter_lim=50000
         )[:4]
         sol_ = np.reshape(sol_, newshape=(nz_, n_))
         end_t = time.time()
         print("Total iterations: ", itn_)
         print("Total time to solve: ", "{:4.2f}".format(end_t - start_t), " s \n")
+
+        total_iter = itn_
+        tsolve = end_t - start_t
 
     if solver_name == "lsmr":
 
@@ -235,12 +233,29 @@ if __name__ == "__main__":
             np.reshape(rhs_, newshape=(nz_ * n_, 1)),
             atol=0,
             btol=tol_,
-            show=True
+            show=True,
+            iter_lim=50000
         )[:4]
         sol_ = np.reshape(sol_, newshape=(nz_, n_))
         end_t = time.time()
         print("Total iterations: ", itn_)
         print("Total time to solve: ", "{:4.2f}".format(end_t - start_t), " s \n")
 
+        total_iter = itn_
+        tsolve = end_t - start_t
+
     plt.imshow(np.real(sol_), cmap="Greys")
     plt.show()
+
+    # ----------------------------------------------
+    # Save files
+    # ----------------------------------------------
+
+    np.savez(filepath3_ + "sol-" + solver_name + "-" + "{:4.2f}".format(freq) + ".npz", sol_)
+
+    file_data = {}
+    file_data["niter"] = total_iter
+    file_data["tsolve"] = "{:4.2f}".format(tsolve)
+
+    with open(filepath3_ + "stats-" + solver_name + "-" + "{:4.2f}".format(freq) + ".json", "w") as file:
+        json.dump(file_data, file, indent=4)
