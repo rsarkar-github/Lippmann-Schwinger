@@ -141,6 +141,9 @@ if __name__ == "__main__":
 
     np.savez(filepath3_ + "rhs-" + "{:4.2f}".format(freq) + ".npz", rhs_)
 
+    rhs_norm = np.linalg.norm(rhs_)
+    rhs_ = rhs_ / rhs_norm
+
     # ----------------------------------------------
     # Initialize linear operator objects
     # ----------------------------------------------
@@ -244,6 +247,7 @@ if __name__ == "__main__":
         total_iter = itn_
         tsolve = end_t - start_t
 
+    sol_ = sol_ * rhs_norm
     plt.imshow(np.real(sol_), cmap="Greys")
     plt.show()
 
