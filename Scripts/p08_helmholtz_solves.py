@@ -98,6 +98,7 @@ if __name__ == "__main__":
         omega=omega_,
         precision=precision_,
         vel=vel_helmholtz,
+        pml_damping=50.0,
         adj=False,
         warnings=True
     )
@@ -195,6 +196,7 @@ if __name__ == "__main__":
         tsolve = end_t - start_t
 
     sol_ = sol_ * rhs_norm
+    sol_ = sol_[pml_cells: pml_cells + nz_, pml_cells: pml_cells + n_]
     plt.imshow(np.real(sol_), cmap="Greys")
     plt.show()
 
