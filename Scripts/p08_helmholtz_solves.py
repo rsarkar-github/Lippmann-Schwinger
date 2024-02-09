@@ -132,7 +132,7 @@ if __name__ == "__main__":
             mat,
             np.reshape(rhs_, newshape=(nz_helmholtz_ * n_helmholtz_, 1)),
             maxiter=50000,
-            restart=5000,
+            restart=1000,
             atol=0,
             tol=tol_,
             callback=counter
