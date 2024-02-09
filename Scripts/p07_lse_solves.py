@@ -177,7 +177,7 @@ if __name__ == "__main__":
         print("----------------------------------------------")
         print("Solver: GMRES \n")
 
-        tol_ = 1e-6
+        tol_ = 1e-5
         counter = gmres_counter()
 
         start_t = time.time()
@@ -204,13 +204,13 @@ if __name__ == "__main__":
         print("----------------------------------------------")
         print("Solver: LSQR \n")
 
-        tol_ = 1e-6
+        tol_ = 1e-5
 
         start_t = time.time()
         sol_, istop, itn_, r1norm = lsqr(
             linop_lse,
             np.reshape(rhs_, newshape=(nz_ * n_, 1)),
-            atol=1e-6,
+            atol=1e-5,
             btol=tol_,
             show=True,
             iter_lim=50000
@@ -228,13 +228,13 @@ if __name__ == "__main__":
         print("----------------------------------------------")
         print("Solver: LSMR \n")
 
-        tol_ = 1e-6
+        tol_ = 1e-5
 
         start_t = time.time()
         sol_, istop, itn_, r1norm = lsmr(
             linop_lse,
             np.reshape(rhs_, newshape=(nz_ * n_, 1)),
-            atol=1e-6,
+            atol=1e-5,
             btol=tol_,
             show=True,
             maxiter=50000
