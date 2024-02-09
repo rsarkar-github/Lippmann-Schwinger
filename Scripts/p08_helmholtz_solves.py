@@ -131,8 +131,8 @@ if __name__ == "__main__":
         sol_, exitcode = gmres(
             mat,
             np.reshape(rhs_, newshape=(nz_helmholtz_ * n_helmholtz_, 1)),
-            maxiter=50000,
-            restart=1000,
+            maxiter=200000,
+            restart=1500,
             atol=0,
             tol=tol_,
             callback=counter
@@ -160,7 +160,7 @@ if __name__ == "__main__":
             atol=1e-5,
             btol=tol_,
             show=True,
-            iter_lim=50000
+            iter_lim=200000
         )[:4]
         sol_ = np.reshape(sol_, newshape=(nz_helmholtz_, n_helmholtz_))
         end_t = time.time()
@@ -184,7 +184,7 @@ if __name__ == "__main__":
             atol=1e-5,
             btol=tol_,
             show=True,
-            maxiter=50000
+            maxiter=200000
         )[:4]
         sol_ = np.reshape(sol_, newshape=(nz_helmholtz_, n_helmholtz_))
         end_t = time.time()
