@@ -1,4 +1,4 @@
-# TimeDependentBornScattering
+# Lippmann-Schwinger
 
 - Numpy, Devito based Python codes for the Lippmann-Schwinger problem
 
