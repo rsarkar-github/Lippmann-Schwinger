@@ -291,8 +291,7 @@ if __name__ == "__main__":
                 restart=5000,
                 atol=0,
                 tol=tol_,
-                callback=counter,
-                x0=np.reshape(intitial_sol, newshape=(nz_ * n_, 1))
+                callback=counter
             )
             sol_ = np.reshape(sol_, newshape=(nz_, n_))
             end_t = time.time()
@@ -316,8 +315,7 @@ if __name__ == "__main__":
                 atol=0,
                 btol=tol_,
                 show=True,
-                iter_lim=50000,
-                x0=np.reshape(intitial_sol, newshape=(nz_ * n_, 1))
+                iter_lim=50000
             )[:4]
             sol_ = np.reshape(sol_, newshape=(nz_, n_))
             end_t = time.time()
@@ -340,8 +338,7 @@ if __name__ == "__main__":
                 atol=0,
                 btol=tol_,
                 show=True,
-                maxiter=50000,
-                x0=np.reshape(intitial_sol, newshape=(nz_ * n_, 1))
+                maxiter=50000
             )[:4]
             sol_ = np.reshape(sol_, newshape=(nz_, n_))
             end_t = time.time()
