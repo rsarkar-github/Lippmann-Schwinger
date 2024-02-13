@@ -10,7 +10,7 @@ from ...Solver.ScatteringIntegralGeneralVz import TruncatedKernelGeneralVz3d
 if __name__ == "__main__":
 
     sigma = 0.03
-    n = 101
+    n = 201
     d = 1.0 / (n - 1)
     precision = np.complex64
     f = 10.0
@@ -35,7 +35,7 @@ if __name__ == "__main__":
             sigma=3 * d/m,
             precision=precision,
             green_func_dir="Lippmann-Schwinger/Test/Data/t13",
-            num_threads=8,
+            num_threads=50,
             verbose=False,
             light_mode=False
         )
@@ -68,7 +68,7 @@ if __name__ == "__main__":
     def helmholtz():
 
         pml_cells = 10
-        n1 = 121
+        n1 = n + 2 * pml_cells
         vel = np.zeros(shape=(n1, n1, n1), dtype=np.float32) + v0
         a1 = d * (n1 - 1)
 
@@ -87,7 +87,7 @@ if __name__ == "__main__":
             warnings=True
         )
         u1 = np.zeros(shape=(n1, n1, n1), dtype=precision)
-        u1[10:111, 10:111, 10:111] = u
+        u1[pml_cells:n+pml_cells, pml_cells:n+pml_cells, pml_cells:n+pml_cells] = u
 
         tol = 1e-5
 
@@ -103,10 +103,14 @@ if __name__ == "__main__":
         print("\nExitcode ", exitcode)
 
         sol = np.reshape(sol, newshape=(n1, n1, n1))
-        sol2 = np.reshape(sol, newshape=(n1, n1, n1))[10:111, 10:111, 10:111]
+        sol2 = np.reshape(sol, newshape=(n1, n1, n1))[
+               pml_cells:n+pml_cells,
+               pml_cells:n+pml_cells,
+               pml_cells:n+pml_cells
+        ]
 
         return sol2
 
     sol2 = helmholtz()
 
-    print("Relative error = ", np.linalg.norm(sol1 - sol2) / np.linalg.norm(sol1))
+    print("Relative error = ", np.linalg.norm(sol1 - sol2) / np.linalg.norm(sol2))
