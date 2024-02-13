@@ -54,9 +54,6 @@ if __name__ == "__main__":
         return sol1, u
 
     sol1, u = lippmann_schwinger()
-    scale = 1e-4
-    plt.imshow(np.real(sol1), cmap="Greys", vmin=-scale, vmax=scale)
-    plt.show()
 
     def make_callback():
         closure_variables = dict(counter=0, residuals=[])
@@ -111,7 +108,5 @@ if __name__ == "__main__":
         return sol2
 
     sol2 = helmholtz()
-    plt.imshow(np.real(sol2), cmap="Greys", vmin=-scale, vmax=scale)
-    plt.show()
 
     print("Relative error = ", np.linalg.norm(sol1 - sol2) / np.linalg.norm(sol1))
