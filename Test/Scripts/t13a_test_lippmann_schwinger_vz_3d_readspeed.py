@@ -48,7 +48,7 @@ if __name__ == "__main__":
         sigma=3 * d / m,
         precision=precision,
         green_func_dir="Lippmann-Schwinger/Test/Data/t13",
-        num_threads=8,
+        num_threads=50,
         verbose=False
     )
     t2 = time.time()
