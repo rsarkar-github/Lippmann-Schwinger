@@ -10,7 +10,7 @@ from ...Solver.ScatteringIntegralGeneralVz import TruncatedKernelGeneralVz3d
 if __name__ == "__main__":
 
     sigma = 0.03
-    n = 101
+    n = 201
     d = 1.0 / (n - 1)
     precision = np.complex64
     f = 10.0
@@ -115,7 +115,7 @@ if __name__ == "__main__":
 
     print("Relative error = ", np.linalg.norm(sol1 - sol2) / np.linalg.norm(sol2))
 
-    scale = 1e-5
+    scale = 5e-5
 
     savefig_name = "Lippmann-Schwinger/Test/Fig/t13-LSE.pdf"
     plt.imshow(np.real(sol1[int(n / 2), :, :]), cmap="Greys", vmin=-scale, vmax=scale)
