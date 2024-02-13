@@ -36,7 +36,7 @@ if __name__ == "__main__":
             precision=precision,
             green_func_dir="Lippmann-Schwinger/Test/Data/t13",
             num_threads=8,
-            verbose=True,
+            verbose=False,
             light_mode=False
         )
 
@@ -114,3 +114,13 @@ if __name__ == "__main__":
     sol2 = helmholtz()
 
     print("Relative error = ", np.linalg.norm(sol1 - sol2) / np.linalg.norm(sol2))
+
+    scale = 1e-6
+
+    savefig_name = "Lippmann-Schwinger/Test/Fig/t13-LSE.pdf"
+    plt.imshow(np.real(sol1[int(n / 2), :, :]), cmap="Greys", vmin=-scale, vmax=scale)
+    plt.savefig(savefig_name, format="pdf", bbox_inches="tight", pad_inches=0.01)
+
+    savefig_name = "Lippmann-Schwinger/Test/Fig/t13-Helmholtz.pdf"
+    plt.imshow(np.real(sol2[int(n / 2), :, :]), cmap="Greys", vmin=-scale, vmax=scale)
+    plt.savefig(savefig_name, format="pdf", bbox_inches="tight", pad_inches=0.01)
