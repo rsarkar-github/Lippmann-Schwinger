@@ -423,8 +423,6 @@ class TruncatedKernelGeneralVz3d:
             if not os.path.exists(green_func_dir):
                 os.makedirs(green_func_dir)
 
-            exit(1)
-
             TypeChecker.check_int_positive(x=num_threads)
             TypeChecker.check(x=no_mpi, expected_type=(bool,))
             TypeChecker.check(x=verbose, expected_type=(bool,))
