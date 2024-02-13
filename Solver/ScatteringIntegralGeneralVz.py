@@ -326,6 +326,7 @@ def func_write3D(params):
 
     # Write slice to disk using default numpy compression
     file_name = os.path.join(green_func_dir, "green_func_slice_" + str(nz_slice) + ".npz")
+    print(nz)
     np.savez_compressed(file_name, data[nz, :, :, :])
 
     # Close shared memory
