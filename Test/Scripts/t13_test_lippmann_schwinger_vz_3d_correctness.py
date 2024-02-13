@@ -115,7 +115,7 @@ if __name__ == "__main__":
 
     print("Relative error = ", np.linalg.norm(sol1 - sol2) / np.linalg.norm(sol2))
 
-    scale = 1e-6
+    scale = 1e-5
 
     savefig_name = "Lippmann-Schwinger/Test/Fig/t13-LSE.pdf"
     plt.imshow(np.real(sol1[int(n / 2), :, :]), cmap="Greys", vmin=-scale, vmax=scale)
