@@ -111,6 +111,6 @@ if __name__ == "__main__":
 
         return sol2
 
-    sol2 = helmholtz()
-
-    print("Relative error = ", np.linalg.norm(sol1 - sol2) / np.linalg.norm(sol2))
+    # sol2 = helmholtz()
+    #
+    # print("Relative error = ", np.linalg.norm(sol1 - sol2) / np.linalg.norm(sol2))
