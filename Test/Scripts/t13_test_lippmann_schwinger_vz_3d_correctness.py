@@ -10,7 +10,7 @@ from ...Solver.ScatteringIntegralGeneralVz import TruncatedKernelGeneralVz3d
 if __name__ == "__main__":
 
     sigma = 0.03
-    n = 201
+    n = 101
     d = 1.0 / (n - 1)
     precision = np.complex64
     f = 10.0
@@ -35,7 +35,7 @@ if __name__ == "__main__":
             sigma=3 * d/m,
             precision=precision,
             green_func_dir="Lippmann-Schwinger/Test/Data/t13",
-            num_threads=50,
+            num_threads=8,
             verbose=False,
             light_mode=False
         )
