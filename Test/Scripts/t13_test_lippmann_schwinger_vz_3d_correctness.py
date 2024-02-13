@@ -10,7 +10,7 @@ from ...Solver.ScatteringIntegralGeneralVz import TruncatedKernelGeneralVz3d
 if __name__ == "__main__":
 
     sigma = 0.03
-    n = 201
+    n = 251
     d = 1.0 / (n - 1)
     precision = np.complex64
     f = 10.0
