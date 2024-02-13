@@ -367,7 +367,7 @@ def func_read3D(params):
     sm.close()
 
 
-class TruncatedKernelGeneralVz3D:
+class TruncatedKernelGeneralVz3d:
 
     def __init__(self, n, nz, a, b, k, vz, m, sigma, precision, green_func_dir, num_threads, no_mpi=False, verbose=False, light_mode=False):
         """
@@ -943,6 +943,9 @@ class TruncatedKernelGeneralVz3D:
                             pbar.update()
 
                 self._green_func = temp * 1.0
+
+            # Write Green's function to disk
+            self.write_green_func()
 
         t22 = time.time()
         print("\nComputing 3d Green's Function took ", "{:6.2f}".format(t22 - t11), " s\n")
