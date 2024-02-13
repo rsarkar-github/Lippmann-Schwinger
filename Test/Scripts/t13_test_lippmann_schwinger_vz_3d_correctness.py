@@ -103,7 +103,7 @@ if __name__ == "__main__":
         print("\nExitcode ", exitcode)
 
         sol = np.reshape(sol, newshape=(n1, n1, n1))
-        sol2 = np.reshape(sol, newshape=(n1, n1))[10:111, 10:111, 10:111]
+        sol2 = np.reshape(sol, newshape=(n1, n1, n1))[10:111, 10:111, 10:111]
 
         return sol2
 
