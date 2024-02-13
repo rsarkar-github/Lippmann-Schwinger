@@ -683,6 +683,8 @@ class TruncatedKernelGeneralVz3d:
                     ) for ii in range(self._nz)
                 ]
 
+                print("\nWriting Green's function...")
+
                 with Pool(min(len(param_tuple_list), mp.cpu_count(), self._num_threads)) as pool:
                     max_ = len(param_tuple_list)
 
@@ -1062,6 +1064,8 @@ class TruncatedKernelGeneralVz3d:
                     sm.name
                 ) for ii in range(self._nz)
             ]
+
+            print("\nReading Green's function...")
 
             with Pool(min(len(param_tuple_list), mp.cpu_count(), self._num_threads)) as pool:
                 max_ = len(param_tuple_list)

@@ -36,7 +36,7 @@ if __name__ == "__main__":
             precision=precision,
             green_func_dir="Lippmann-Schwinger/Test/Data/t13",
             num_threads=8,
-            verbose=False,
+            verbose=True,
             light_mode=False
         )
 
