@@ -326,7 +326,6 @@ def func_write3D(params):
 
     # Write slice to disk using default numpy compression
     file_name = os.path.join(green_func_dir, "green_func_slice_" + str(nz_slice) + ".npz")
-    print(nz)
     np.savez_compressed(file_name, data[nz, :, :, :])
 
     # Close shared memory
@@ -682,6 +681,7 @@ class TruncatedKernelGeneralVz3d:
                         sm.name
                     ) for ii in range(self._nz)
                 ]
+                print(len(param_tuple_list))
 
                 with Pool(min(len(param_tuple_list), mp.cpu_count(), self._num_threads)) as pool:
                     max_ = len(param_tuple_list)
