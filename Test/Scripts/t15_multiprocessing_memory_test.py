@@ -191,8 +191,9 @@ if __name__ == "__main__":
         ]
 
         print("\nRunning multiprocessing jobs...")
+        print("Num CPUs = ", mp.cpu_count())
 
-        with Pool(min(len(param_tuple_list), mp.cpu_count())) as pool:
+        with Pool(min(len(param_tuple_list), mp.cpu_count(), 50)) as pool:
             max_ = len(param_tuple_list)
 
             with tqdm(total=max_) as pbar:
