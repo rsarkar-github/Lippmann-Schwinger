@@ -4,8 +4,8 @@ import time
 import json
 import matplotlib.pyplot as plt
 from scipy.sparse.linalg import LinearOperator, gmres, lsqr, lsmr
-from Solver.ScatteringIntegralGeneralVz import TruncatedKernelGeneralVz2d
-from Utilities.LinearSolvers import gmres_counter
+from ...Solver.ScatteringIntegralGeneralVz import TruncatedKernelGeneralVz2d
+from ...Utilities.LinearSolvers import gmres_counter
 
 
 if __name__ == "__main__":

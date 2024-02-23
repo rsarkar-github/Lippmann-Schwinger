@@ -6,7 +6,7 @@ from multiprocessing import Pool
 from tqdm import tqdm
 from multiprocessing.shared_memory import SharedMemory
 from multiprocessing.managers import SharedMemoryManager
-from Solver.ScatteringIntegralGeneralVz import TruncatedKernelGeneralVz2d
+from ...Solver.ScatteringIntegralGeneralVz import TruncatedKernelGeneralVz2d
 
 
 def func(params):
