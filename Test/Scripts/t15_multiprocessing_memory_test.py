@@ -131,7 +131,7 @@ if __name__ == "__main__":
     # Setup multiprocessing workflow
     # ----------------------------------------------
 
-    num_jobs = 100
+    num_jobs = 10000
     rhs_ = np.zeros(shape=(nz_, n_), dtype=precision_)
 
     # Read in multiprocessing mode
