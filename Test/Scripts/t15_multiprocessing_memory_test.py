@@ -1,11 +1,41 @@
 import time
 import numpy as np
+from numpy import ndarray
 import multiprocessing as mp
 from multiprocessing import Pool
+from tqdm import tqdm
 from multiprocessing.shared_memory import SharedMemory
 from multiprocessing.managers import SharedMemoryManager
-from scipy.sparse.linalg import LinearOperator
 from Solver.ScatteringIntegralGeneralVz import TruncatedKernelGeneralVz2d
+
+
+def func(params):
+
+    op = params[0]
+    rhs = params[1]
+    sou = params[2]
+    green_func_shape = params[3]
+    precision = params[4]
+    sm_name = params[5]
+    job_id = params[6]
+
+    # Attach to shared memory
+    sm = SharedMemory(sm_name)
+    greens_func = ndarray(shape=green_func_shape, dtype=precision, buffer=sm.buf)
+    op.greens_func = greens_func
+
+    # Perform convolution
+    t1 = time.time()
+    op.apply_kernel(u=sou, output=rhs)
+    t2 = time.time()
+    print(
+        "Job id = ", str(job_id),
+        ", Operator application time = ", "{:6.2f}".format(t2 - t1), " s",
+        ", Norm of result = ", np.linalg.norm(rhs)
+    )
+
+    # Close shared memory
+    sm.close()
 
 
 if __name__ == "__main__":
@@ -94,53 +124,77 @@ if __name__ == "__main__":
     )
 
     green_func = op.greens_func
-
-    # Calculate number of bytes
-    num_bytes = self._nz * self._nz * self._num_bins_non_neg * self._num_bins_non_neg
-    if self._precision == np.complex64:
-        num_bytes *= 8
-    if self._precision == np.complex128:
-        num_bytes *= 16
+    num_bytes = op.green_func_bytes
+    green_func_shape = op.green_func_shape
 
     # ----------------------------------------------
     # Setup multiprocessing workflow
     # ----------------------------------------------
 
+    num_jobs = 100
+    rhs_ = np.zeros(shape=(nz_, n_), dtype=precision_)
+
     # Read in multiprocessing mode
     with SharedMemoryManager() as smm:
 
-
         # Create shared memory
         sm = smm.SharedMemory(size=num_bytes)
-        self._green_func = ndarray(
-            shape=(self._nz, self._nz, self._num_bins_non_neg, self._num_bins_non_neg),
-            dtype=self._precision,
+        green_func_shared = ndarray(
+            shape=op.greens_func.shape,
+            dtype=precision_,
             buffer=sm.buf
         )
-        self._green_func *= 0
+        green_func_shared *= 0
+        green_func_shared += green_func
+
+        op1 = TruncatedKernelGeneralVz2d(
+            n=n_,
+            nz=nz_,
+            a=a_,
+            b=b_,
+            k=omega_,
+            vz=vz_,
+            m=m_,
+            sigma=sigma_,
+            precision=precision_,
+            green_func_dir=green_func_dir_,
+            num_threads=num_threads_,
+            verbose=False,
+            light_mode=True
+        )
+        op1.set_parameters(
+            n=n_,
+            nz=nz_,
+            a=a_,
+            b=b_,
+            k=omega_,
+            vz=vz_,
+            m=m_,
+            sigma=sigma_,
+            precision=precision_,
+            green_func_dir=green_func_dir_,
+            green_func_set=False,
+            num_threads=num_threads_,
+            verbose=False
+        )
 
         param_tuple_list = [
             (
-                self._green_func_dir,
-                ii,
-                self._nz,
-                self._n,
-                self._precision,
-                sm.name
-            ) for ii in range(self._nz)
+                op1,
+                rhs_,
+                sou_,
+                green_func_shape,
+                precision_,
+                sm.name,
+                ii
+            ) for ii in range(num_jobs)
         ]
 
-        print("\nReading Green's function...")
+        print("\nRunning multiprocessing jobs...")
 
-        with Pool(min(len(param_tuple_list), mp.cpu_count(), self._num_threads)) as pool:
+        with Pool(min(len(param_tuple_list), mp.cpu_count())) as pool:
             max_ = len(param_tuple_list)
 
             with tqdm(total=max_) as pbar:
-                for _ in pool.imap_unordered(func_read3D, param_tuple_list):
+                for _ in pool.imap_unordered(func, param_tuple_list):
                     pbar.update()
-
-
-    rhs_ = np.zeros(shape=(nz_, n_), dtype=precision_)
-    t1 = time.time()
-    op.apply_kernel(u=sou_, output=rhs_)
-    t2 = time.time()
