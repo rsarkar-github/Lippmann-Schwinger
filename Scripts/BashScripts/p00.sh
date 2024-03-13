@@ -6,7 +6,8 @@
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 echo $SCRIPT_DIR
-cd $SCRIPT_DIR ..
+cd $SCRIPT_DIR
+cd ..
 pwd
 #cd /home/rsarkar/Research/Thesis
 #python -m Lippmann-Schwinger.Scripts.p01_create_vz_marmousi
