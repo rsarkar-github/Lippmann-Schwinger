@@ -1,8 +1,8 @@
 # Run from within this directory
 
-cd ~
-source .bashrc
-conda activate py39
+#cd ~
+#source .bashrc
+#conda activate py39
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 echo $SCRIPT_DIR
