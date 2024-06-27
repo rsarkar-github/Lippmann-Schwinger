@@ -9,5 +9,5 @@ conda activate py39
 cd $SCRIPT_DIR
 cd ../../..
 
-python -m Lippmann-Schwinger.Scripts.p07_lse_solves 1 2 1
-python -m Lippmann-Schwinger.Scripts.p07_lse_solves 1 2 2
+python -m Lippmann-Schwinger.Scripts.p07a_lse_solves 1 2 1
+python -m Lippmann-Schwinger.Scripts.p07a_lse_solves 1 2 2

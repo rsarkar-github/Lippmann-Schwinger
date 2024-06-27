@@ -2,8 +2,7 @@ import sys
 import numpy as np
 import time
 import json
-import matplotlib.pyplot as plt
-from scipy.sparse.linalg import gmres, lsqr, lsmr
+from scipy.sparse.linalg import lsqr, lsmr
 from ..Solver.HelmholtzOperators import create_helmholtz2d_matrix
 from ..Utilities.LinearSolvers import gmres_counter
 
@@ -168,8 +167,6 @@ if __name__ == "__main__":
 
     sol_ = sol_ * rhs_norm
     sol_ = sol_[pml_cells: pml_cells + nz_, pml_cells: pml_cells + n_]
-    plt.imshow(np.real(sol_), cmap="Greys")
-    plt.show()
 
     # ----------------------------------------------
     # Save files

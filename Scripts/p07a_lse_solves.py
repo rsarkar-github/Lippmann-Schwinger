@@ -2,8 +2,7 @@ import sys
 import numpy as np
 import time
 import json
-import matplotlib.pyplot as plt
-from scipy.sparse.linalg import LinearOperator, gmres, lsqr, lsmr
+from scipy.sparse.linalg import LinearOperator, lsqr, lsmr
 from ..Solver.ScatteringIntegralGeneralVz import TruncatedKernelGeneralVz2d
 from ..Utilities.LinearSolvers import gmres_counter
 
@@ -219,8 +218,6 @@ if __name__ == "__main__":
         tsolve = end_t - start_t
 
     sol_ = sol_ * rhs_norm
-    plt.imshow(np.real(sol_), cmap="Greys")
-    plt.show()
 
     # ----------------------------------------------
     # Save files
