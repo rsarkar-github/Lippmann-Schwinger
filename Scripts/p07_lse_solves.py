@@ -58,7 +58,7 @@ if __name__ == "__main__":
     elif solver_mode == 2:
         solver_name = "lsmr"
     else:
-        raise ValueError("freq mode = ", freq_mode, " is not supported. Must be 0, 1, 2, or 3.")
+        raise ValueError("solver mode = ", solver_mode, " is not supported. Must be 0, 1, or 2.")
 
     # ----------------------------------------------
     # Load vz and calculate psi

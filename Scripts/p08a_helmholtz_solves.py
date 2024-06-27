@@ -23,15 +23,15 @@ if __name__ == "__main__":
     if model_mode == 0:
         filepath1 = "Lippmann-Schwinger/Data/p04a-sigsbee-new-2d.npz"
         filepath2 = "Lippmann-Schwinger/Data/p06-sigsbee-source.npz"
-        filepath3_ = "Lippmann-Schwinger/Data/p08-sigsbee-"
+        filepath3_ = "Lippmann-Schwinger/Data/p08a-sigsbee-"
     elif model_mode == 1:
         filepath1 = "Lippmann-Schwinger/Data/p04b-marmousi-new-2d.npz"
         filepath2 = "Lippmann-Schwinger/Data/p06-marmousi-source.npz"
-        filepath3_ = "Lippmann-Schwinger/Data/p08-marmousi-"
+        filepath3_ = "Lippmann-Schwinger/Data/p08a-marmousi-"
     elif model_mode == 2:
         filepath1 = "Lippmann-Schwinger/Data/p04c-seiscope-new-2d.npz"
         filepath2 = "Lippmann-Schwinger/Data/p06-seiscope-source.npz"
-        filepath3_ = "Lippmann-Schwinger/Data/p08-seiscope-"
+        filepath3_ = "Lippmann-Schwinger/Data/p08a-seiscope-"
     else:
         raise ValueError("model mode = ", model_mode, " is not supported. Must be 0, 1, or 2.")
 
@@ -48,14 +48,12 @@ if __name__ == "__main__":
         raise ValueError("freq mode = ", freq_mode, " is not supported. Must be 0, 1, 2, or 3.")
 
 
-    if solver_mode == 0:
-        solver_name = "gmres"
-    elif solver_mode == 1:
+    if solver_mode == 1:
         solver_name = "lsqr"
     elif solver_mode == 2:
         solver_name = "lsmr"
     else:
-        raise ValueError("solver mode = ", solver_mode, " is not supported. Must be 0, 1, or 2.")
+        raise ValueError("solver mode = ", solver_mode, " is not supported. Must be 1, or 2.")
 
     # ----------------------------------------------
     # Load vel
@@ -120,33 +118,6 @@ if __name__ == "__main__":
     # Run solver iterations
     # ----------------------------------------------
 
-    if solver_name == "gmres":
-
-        print("----------------------------------------------")
-        print("Solver: GMRES \n")
-
-        tol_ = 1e-5
-        counter = gmres_counter()
-
-        start_t = time.time()
-        sol_, exitcode = gmres(
-            mat,
-            np.reshape(rhs_, newshape=(nz_helmholtz_ * n_helmholtz_, 1)),
-            maxiter=200000,
-            restart=1500,
-            atol=0,
-            tol=tol_,
-            callback=counter
-        )
-        sol_ = np.reshape(sol_, newshape=(nz_helmholtz_, n_helmholtz_))
-        end_t = time.time()
-        print("Exitcode= ", exitcode)
-        print("Total iterations= ", counter.niter)
-        print("Total time to solve: ", "{:4.2f}".format(end_t - start_t), " s \n")
-
-        total_iter = counter.niter
-        tsolve = end_t - start_t
-
     if solver_name == "lsqr":
 
         print("----------------------------------------------")
@@ -158,7 +129,7 @@ if __name__ == "__main__":
         sol_, istop, itn_, r1norm = lsqr(
             mat,
             np.reshape(rhs_, newshape=(nz_helmholtz_ * n_helmholtz_, 1)),
-            atol=1e-5,
+            atol=0,
             btol=tol_,
             show=True,
             iter_lim=200000
@@ -182,7 +153,7 @@ if __name__ == "__main__":
         sol_, istop, itn_, r1norm = lsmr(
             mat,
             np.reshape(rhs_, newshape=(nz_helmholtz_ * n_helmholtz_, 1)),
-            atol=1e-5,
+            atol=0,
             btol=tol_,
             show=True,
             maxiter=200000
