@@ -4,7 +4,6 @@ import time
 import json
 from scipy.sparse.linalg import lsqr, lsmr
 from ..Solver.HelmholtzOperators import create_helmholtz2d_matrix
-from ..Utilities.LinearSolvers import gmres_counter
 
 
 if __name__ == "__main__":
